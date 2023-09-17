@@ -31,6 +31,7 @@
       curl
       git
       compsize
+      efibootmgr
     ];
     variables.EDITOR = "hx";
     etc = {
