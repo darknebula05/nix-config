@@ -1,0 +1,14 @@
+{ config, pkgs, ... }:
+
+{
+  imports = [];
+
+  home = {
+    username = "cameron";
+    homeDirectory = "/home/cameron";
+
+    stateVersion = "23.11";
+  };
+
+  programs.home-manager.enable = true;
+}
