@@ -1,8 +1,6 @@
 {
   description = "NixOS base flake";
 
-  nixConfig.experimental-features = [ "nix-command" "flakes" ];
-
   inputs = {
     nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
     home-manager.url = "github:nix-community/home-manager";

@@ -24,5 +24,9 @@
     };
   };
 
+  networking.hostName = "cam-laptop";
+
+  networking.networkmanager.enable = true;
+
   system.stateVersion = "23.11";
 }

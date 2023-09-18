@@ -1,7 +1,11 @@
 { config, pkgs, ... }:
 
 {
-  imports = [];
+  imports = [
+    ./hyprland
+    ./helix
+    ./services
+  ];
 
   home = {
     username = "cameron";

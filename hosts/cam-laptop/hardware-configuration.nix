@@ -19,6 +19,12 @@
       options = [ "subvol=@nixos" ];
     };
 
+  fileSystems."/home" =
+    { device = "/dev/disk/by-uuid/267a675a-be05-498c-b554-123d4a02a3cc";
+      fsType = "btrfs";
+      options = [ "subvol=@nixhome" ];
+    };
+
   fileSystems."/nix" =
     { device = "/dev/disk/by-uuid/267a675a-be05-498c-b554-123d4a02a3cc";
       fsType = "btrfs";
