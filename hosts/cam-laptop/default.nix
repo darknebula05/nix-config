@@ -13,16 +13,8 @@
     "/nix".options = [ "compress=zstd" "noatime" ];
   };
 
-  # boot.loader = {
-  #   efi = {
-  #     canTouchEfiVariables = true;
-  #     efiSysMountPoint = "/efi";
-  #   };
-  #   grub = {
-  #     efiSupport = true;
-  #     device = "nodev";
-  #   };
-  # };
+  boot.loader.systemd-boot.enable = true;
+  boot.loader.efi.canTouchEfiVariables = true;
 
   networking.hostName = "cam-laptop";
 

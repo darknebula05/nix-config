@@ -8,7 +8,7 @@
     [ (modulesPath + "/installer/scan/not-detected.nix")
     ];
 
-  boot.initrd.availableKernelModules = [ "xhci_pci" "nvme" "usbhid" ];
+  boot.initrd.availableKernelModules = [ "xhci_pci" "nvme" ];
   boot.initrd.kernelModules = [ ];
   boot.kernelModules = [ "kvm-intel" ];
   boot.extraModulePackages = [ ];
@@ -19,16 +19,16 @@
       options = [ "subvol=@nixos" ];
     };
 
-  fileSystems."/home" =
-    { device = "/dev/disk/by-uuid/267a675a-be05-498c-b554-123d4a02a3cc";
-      fsType = "btrfs";
-      options = [ "subvol=@nixhome" ];
-    };
-
   fileSystems."/nix" =
     { device = "/dev/disk/by-uuid/267a675a-be05-498c-b554-123d4a02a3cc";
       fsType = "btrfs";
       options = [ "subvol=@nix" ];
+    };
+
+  fileSystems."/home" =
+    { device = "/dev/disk/by-uuid/267a675a-be05-498c-b554-123d4a02a3cc";
+      fsType = "btrfs";
+      options = [ "subvol=@nixhome" ];
     };
 
   swapDevices = [ ];
@@ -38,7 +38,6 @@
   # still possible to use this option, but it's recommended to use it in conjunction
   # with explicit per-interface declarations with `networking.interfaces.<interface>.useDHCP`.
   networking.useDHCP = lib.mkDefault true;
-  # networking.interfaces.virbr0.useDHCP = lib.mkDefault true;
   # networking.interfaces.wlp0s20f3.useDHCP = lib.mkDefault true;
 
   nixpkgs.hostPlatform = lib.mkDefault "x86_64-linux";
