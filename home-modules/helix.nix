@@ -10,7 +10,7 @@
     enable = true;
     defaultEditor = true;
     settings = {
-      theme = lib.mkIf (!config.stylix.targets.helix.enable) "catppuccin_mocha";
+      theme = lib.mkForce "catppuccin_mocha";
       editor = {
         line-number = "relative";
         bufferline = "always";

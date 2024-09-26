@@ -7,7 +7,6 @@
 }:
 {
   imports = lib.optional (!osConfig ? stylix) inputs.stylix.homeManagerModules.stylix;
-  stylix.targets.helix.enable = false;
   gtk = {
     enable = true;
     iconTheme = {

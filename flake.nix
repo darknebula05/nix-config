@@ -44,23 +44,23 @@
           cam-desktop.userHomeModules = [ "cameron" ];
           cam-laptop.userHomeModules = [ "cameron" ];
           nixos-wsl.userHomeModules = [ "cshearer" ];
-          nixos-vm.importDefault = false;
         };
       };
       systems = [ "x86_64-linux" ];
-      flake =
-        { config, ... }:
+      perSystem =
+        { pkgs, ... }:
         let
+          toplevel = builtins.mapAttrs (_: cfg: cfg.config.system.build.toplevel) self.nixosConfigurations;
           spec = {
-            agents = builtins.mapAttrs (
-              name: value: value.config.system.build.toplevel
-            ) config.nixosConfigurations;
+            agents = toplevel;
           };
-          system = "x86_64-linux";
-          pkgs = inputs.nixpkgs.legacyPackages.${system};
+          deploy = pkgs.writeText "cachix-deploy.json" (builtins.toJSON spec);
         in
         {
-          packages.${system}.default = pkgs.writeText "cachix-deploy.json" (builtins.toJSON spec);
+          packages = toplevel // {
+            inherit deploy;
+            default = deploy;
+          };
         };
     };
 }
