@@ -10,6 +10,4 @@
     ewwDir = ./eww;
     flakeDir = "/home/cameron/.dotfiles/nix";
   };
-
-  services.cachix-agent.enable = true;
 }

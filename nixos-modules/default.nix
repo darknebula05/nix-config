@@ -6,7 +6,12 @@
 }:
 {
   imports = lib.attrValues {
-    inherit (ezModules) stylix variables home;
+    inherit (ezModules)
+      cachix
+      home
+      stylix
+      variables
+      ;
   };
 
   services.automatic-timezoned.enable = true;
