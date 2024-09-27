@@ -94,23 +94,5 @@
     POLKIT_BIN = "${pkgs.polkit_gnome}/libexec/polkit-gnome-authentication-agent-1";
   };
 
-  nixpkgs = {
-    config.allowUnfree = true;
-  };
-
-  nix = {
-    settings = {
-      auto-optimise-store = true;
-      experimental-features = [
-        "nix-command"
-        "flakes"
-      ];
-      trusted-users = [
-        "root"
-        "@wheel"
-      ];
-    };
-  };
-
   system.stateVersion = "24.05";
 }

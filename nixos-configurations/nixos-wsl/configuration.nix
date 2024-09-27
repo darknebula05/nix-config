@@ -33,24 +33,4 @@
     tailscale.enable = true;
     openssh.enable = true;
   };
-
-  nixpkgs = {
-    config.allowUnfree = true;
-  };
-
-  nix = {
-    settings = {
-      max-jobs = 8;
-      experimental-features = [
-        "nix-command"
-        "flakes"
-      ];
-      auto-optimise-store = true;
-      trusted-users = [
-        "root"
-        "cshearer"
-      ];
-    };
-    nixPath = [ "nixpkgs=${inputs.nixpkgs}" ];
-  };
 }
