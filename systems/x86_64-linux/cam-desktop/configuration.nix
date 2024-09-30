@@ -121,8 +121,10 @@ with lib.${namespace};
     openssh = enabled;
     pipewire = {
       enable = true;
-      alsa = enabled;
-      alsa.support32Bit = true;
+      alsa = {
+        enable = true;
+        support32Bit = true;
+      };
       pulse = enabled;
       jack = enabled;
     };

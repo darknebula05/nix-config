@@ -6,14 +6,19 @@
   config,
   ...
 }:
+with lib;
+with lib.${namespace};
 {
   imports = [
     ./configuration.nix
   ];
 
-  ${namespace}.variables = {
-    username = "cameron";
-    ewwDir = ./eww;
-    flakeDir = "/home/cameron/.dotfiles/nix";
+  ${namespace} = {
+    keyd = enabled;
+    variables = {
+      username = "cameron";
+      ewwDir = ./eww;
+      flakeDir = "/home/cameron/.dotfiles/nix";
+    };
   };
 }

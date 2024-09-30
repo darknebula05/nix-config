@@ -20,9 +20,9 @@ with lib.${namespace};
 
   config = mkIf cfg.enable {
     ${namespace} = {
-      home = enabled;
-      cachix = enabled;
-      stylix = enabled;
+      home = mkDefault enabled;
+      cachix = mkDefault enabled;
+      stylix = mkDefault enabled;
     };
 
     services.automatic-timezoned = enabled;

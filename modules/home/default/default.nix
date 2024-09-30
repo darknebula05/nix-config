@@ -21,9 +21,9 @@ with lib.${namespace};
 
   config = {
     ${namespace} = mkIf cfg.enable {
-      sh = enabled;
-      helix = enabled;
-      stylix = enabled;
+      sh = mkDefault enabled;
+      helix = mkDefault enabled;
+      stylix = mkDefault enabled;
     };
     home.stateVersion = "24.05";
     fonts.fontconfig = enabled;

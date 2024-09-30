@@ -84,14 +84,18 @@ with lib.${namespace};
     openssh = enabled;
     pipewire = {
       enable = true;
-      alsa = enabled;
-      alsa.support32Bit = true;
+      alsa = {
+        enable = true;
+        support32Bit = true;
+      };
       pulse = enabled;
       jack = enabled;
     };
     printing = enabled;
-    tailscale = enabled;
-    tailscale.useRoutingFeatures = "both";
+    tailscale = {
+      enable = true;
+      useRoutingFeatures = "both";
+    };
   };
 
   environment.variables = {

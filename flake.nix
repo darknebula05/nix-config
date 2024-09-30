@@ -36,5 +36,8 @@
     inputs.snowfall-lib.mkFlake {
       inherit inputs;
       src = ./.;
+    }
+    // {
+      self = inputs.self;
     };
 }
