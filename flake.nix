@@ -33,11 +33,27 @@
 
   outputs =
     inputs:
-    inputs.snowfall-lib.mkFlake {
-      inherit inputs;
-      src = ./.;
-    }
-    // {
-      self = inputs.self;
+    let
+      lib = inputs.snowfall-lib.mkLib {
+        inherit inputs;
+        src = ./.;
+        snowfall.namespace = "camms";
+      };
+    in
+    lib.mkFlake {
+      systems = {
+        modules.nixos = with inputs; [
+          home-manager.nixosModules.home-manager
+          stylix.nixosModules.stylix
+        ];
+        hosts = {
+          cam-laptop.modules = with inputs; [
+            nixos-hardware.nixosModules.framework-13-7040-amd
+          ];
+        };
+      };
+
+      channels-config.allowUnfree = true;
+
     };
 }

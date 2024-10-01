@@ -11,7 +11,6 @@ with lib.${namespace};
 {
   imports = [
     ./configuration.nix
-    inputs.nixos-hardware.nixosModules.framework-13-7040-amd
   ];
 
   ${namespace} = {

@@ -7,7 +7,7 @@
 with lib;
 with lib.${namespace};
 {
-  ${namespace} = {
+  camms = {
     browser = enabled;
     hyprland = enabled;
     programs = enabled;

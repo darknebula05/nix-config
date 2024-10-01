@@ -13,8 +13,6 @@ in
 with lib;
 with lib.${namespace};
 {
-  imports = optional (!osConfig ? stylix) inputs.stylix.homeManagerModules.stylix;
-
   options.${namespace}.stylix.enable = mkEnableOption "stylix";
 
   config = mkIf cfg.enable {
