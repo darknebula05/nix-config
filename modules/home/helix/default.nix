@@ -4,7 +4,7 @@
   inputs,
   namespace,
   config,
-  osConfig,
+  osConfig ? { },
   ...
 }:
 let
@@ -70,7 +70,7 @@ with lib.${namespace};
           command = "${pkgs.nixd}/bin/nixd";
           config.nixd.options =
             let
-              flake = osConfig.${namespace}.variables.flakeDir;
+              flake = osConfig.${namespace}.variables.flakeDir or "${config.user.home.directory}/.config/nix";
             in
             {
               nixos.expr = ''(builtins.getFlake "${flake}").nixosConfigurations.cam-desktop.options'';

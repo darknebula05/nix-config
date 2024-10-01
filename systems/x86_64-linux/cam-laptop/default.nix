@@ -8,6 +8,9 @@
 }:
 with lib;
 with lib.${namespace};
+let
+  user = "cameron";
+in
 {
   imports = [
     ./configuration.nix
@@ -16,9 +19,9 @@ with lib.${namespace};
   ${namespace} = {
     keyd = enabled;
     variables = {
-      username = "cameron";
-      ewwDir = ./eww;
+      username = "${user}";
       flakeDir = "/home/cameron/dotfiles/nix";
     };
   };
+  snowfallorg.users.${user}.home.config.${namespace}.variables.ewwDir = ./eww;
 }

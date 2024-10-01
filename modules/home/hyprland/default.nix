@@ -4,7 +4,6 @@
   inputs,
   namespace,
   config,
-  osConfig,
   ...
 }:
 let
@@ -222,10 +221,10 @@ with lib.${namespace};
     #   wallpaper = eDP-1,/home/cameron/Pictures/wallpapers/death_star.jpg
     # '';
     programs = {
-      eww = mkIf (osConfig.${namespace}.variables.ewwDir != null) {
+      eww = mkIf (config.${namespace}.variables.ewwDir != null) {
         enable = true;
         package = pkgs.eww;
-        configDir = osConfig.${namespace}.variables.ewwDir;
+        configDir = config.${namespace}.variables.ewwDir;
       };
       fuzzel = {
         enable = true;

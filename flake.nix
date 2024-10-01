@@ -3,16 +3,15 @@
 
   inputs = {
     nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
-
     snowfall-lib = {
       url = "github:snowfallorg/lib";
       inputs.nixpkgs.follows = "nixpkgs";
     };
-
     home-manager = {
       url = "github:nix-community/home-manager";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    impermanence.url = "github:nix-community/impermanence";
     nixos-hardware.url = "github:nixos/nixos-hardware";
     nix-index-database = {
       url = "github:nix-community/nix-index-database";
@@ -45,6 +44,7 @@
         modules.nixos = with inputs; [
           home-manager.nixosModules.home-manager
           stylix.nixosModules.stylix
+          impermanence.nixosModules.impermanence
         ];
         hosts = {
           cam-laptop.modules = with inputs; [
@@ -52,6 +52,9 @@
           ];
         };
       };
+      home.modules = with inputs; [
+        impermanence.nixosModules.home-manager.impermanence
+      ];
 
       channels-config.allowUnfree = true;
 

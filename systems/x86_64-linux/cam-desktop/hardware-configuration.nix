@@ -44,6 +44,12 @@
     options = [ "subvol=@nix" ];
   };
 
+  fileSystems."/nix/persist" = {
+    device = "/dev/disk/by-uuid/812017d6-4261-497d-9fca-3bd0aafad435";
+    fsType = "btrfs";
+    options = [ "subvol=@persist" ];
+  };
+
   fileSystems."/home" = {
     device = "/dev/disk/by-uuid/812017d6-4261-497d-9fca-3bd0aafad435";
     fsType = "btrfs";

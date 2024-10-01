@@ -20,9 +20,5 @@ with lib.${namespace};
       type = types.str;
       default = "/home/${cfg.username}/.config/nixos/";
     };
-    ewwDir = mkOption {
-      type = types.nullOr types.path;
-      default = null;
-    };
   };
 }
