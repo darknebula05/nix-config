@@ -33,7 +33,6 @@ with lib.${namespace};
 
   networking = {
     hostName = "cam-desktop";
-    usePredictableInterfaceNames = true;
     hostId = "ed222780";
     networkmanager = {
       enable = true;
@@ -43,7 +42,7 @@ with lib.${namespace};
     nat = {
       enable = true;
       internalInterfaces = [ "ve-+" ];
-      externalInterface = "eth0";
+      externalInterface = "enp14s0";
     };
   };
 
