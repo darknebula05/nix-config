@@ -11,7 +11,7 @@ with lib.${namespace};
 {
   imports = [
     ./hardware-configuration.nix
-    ./nginx.nix
+    # ./nginx.nix
   ];
   hardware.graphics = {
     enable = true;

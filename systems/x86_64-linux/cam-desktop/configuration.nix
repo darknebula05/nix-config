@@ -33,9 +33,18 @@ with lib.${namespace};
 
   networking = {
     hostName = "cam-desktop";
+    usePredictableInterfaceNames = true;
     hostId = "ed222780";
-    networkmanager = enabled;
+    networkmanager = {
+      enable = true;
+      unmanaged = [ "interface-name:ve-*" ];
+    };
     iproute2 = enabled;
+    nat = {
+      enable = true;
+      internalInterfaces = [ "ve-+" ];
+      externalInterface = "eth0";
+    };
   };
 
   i18n.inputMethod = {
