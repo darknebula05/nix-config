@@ -20,7 +20,6 @@ with lib.${namespace};
     ${namespace}.lf = enabled;
 
     home.packages = with pkgs; [
-      cachix
       compsize
       dust
       entr

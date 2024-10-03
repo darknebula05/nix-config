@@ -14,6 +14,7 @@ with lib.${namespace};
   ];
 
   ${namespace} = {
+    suites.common = enabled;
     wsl = enabled;
     variables = {
       username = "cshearer";

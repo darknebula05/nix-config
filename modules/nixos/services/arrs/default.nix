@@ -5,15 +5,15 @@
   ...
 }:
 let
-  cfg = config.${namespace};
-  path = "${cfg.arrs.statePath}";
+  cfg = config.${namespace}.services.arrs;
+  path = "${cfg.statePath}";
   user = "cameron";
   group = "media";
 in
 with lib;
 with lib.${namespace};
 {
-  options.${namespace}.arrs = {
+  options.${namespace}.services.arrs = {
     enable = mkEnableOption "arrs stack";
     statePath = mkOption {
       type = types.str;
@@ -22,7 +22,7 @@ with lib.${namespace};
     };
   };
 
-  config = mkIf cfg.arrs.enable {
+  config = mkIf cfg.enable {
     users.groups.${group}.members = [ "${user}" ];
 
     virtualisation.oci-containers.containers = {
@@ -163,20 +163,22 @@ with lib.${namespace};
       ];
     };
 
-    environment.persistence.${cfg.impermanence.path} = mkIf cfg.impermanence.enable {
-      directories = [
-        "/var/lib/jellyfin"
-        "/var/lib/private/jellyseerr"
-        "/var/lib/private/prowlarr"
-        "/var/lib/radarr"
-        "/var/lib/sonarr"
-        "/var/lib/zurg"
-        "/var/cache/jellyfin"
-        "/var/cache/blackhole"
-      ];
-      files = [
-        "/var/lib/blackhole/.env"
-      ];
-    };
+    environment.persistence.${config.${namespace}.impermanence.path} =
+      mkIf config.${namespace}.impermanence.enable
+        {
+          directories = [
+            "/var/lib/jellyfin"
+            "/var/lib/private/jellyseerr"
+            "/var/lib/private/prowlarr"
+            "/var/lib/radarr"
+            "/var/lib/sonarr"
+            "/var/lib/zurg"
+            "/var/cache/jellyfin"
+            "/var/cache/blackhole"
+          ];
+          files = [
+            "/var/lib/blackhole/.env"
+          ];
+        };
   };
 }

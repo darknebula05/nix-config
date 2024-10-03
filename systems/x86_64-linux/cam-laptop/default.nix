@@ -17,7 +17,10 @@ in
   ];
 
   ${namespace} = {
-    keyd = enabled;
+    suites = {
+      common = enabled;
+      desktop = enabled;
+    };
     variables = {
       username = "${user}";
       flakeDir = "/home/cameron/dotfiles/nix";

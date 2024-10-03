@@ -92,10 +92,6 @@ with lib.${namespace};
       jack = enabled;
     };
     printing = enabled;
-    tailscale = {
-      enable = true;
-      useRoutingFeatures = "both";
-    };
   };
 
   environment.variables = {

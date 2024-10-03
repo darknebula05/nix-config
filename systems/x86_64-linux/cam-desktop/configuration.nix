@@ -142,10 +142,6 @@ with lib.${namespace};
       enable = true;
       capSysAdmin = true;
     };
-    tailscale = {
-      enable = true;
-      useRoutingFeatures = "both";
-    };
   };
 
   environment.variables = {

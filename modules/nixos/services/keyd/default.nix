@@ -7,12 +7,12 @@
   ...
 }:
 let
-  cfg = config.${namespace}.keyd;
+  cfg = config.${namespace}.services.keyd;
 in
 with lib;
 with lib.${namespace};
 {
-  options.${namespace}.keyd.enable = mkEnableOption "keyd";
+  options.${namespace}.services.keyd.enable = mkEnableOption "keyd";
 
   config.services.keyd = mkIf cfg.enable {
     enable = true;

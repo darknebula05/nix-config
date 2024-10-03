@@ -39,7 +39,6 @@ with lib.${namespace};
 
   services = {
     avahi = enabled;
-    tailscale = enabled;
     openssh = enabled;
   };
 }
