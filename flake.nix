@@ -3,30 +3,33 @@
 
   inputs = {
     nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
-    snowfall-lib = {
-      url = "github:snowfallorg/lib";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
-    home-manager = {
-      url = "github:nix-community/home-manager";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
+
+    snowfall-lib.url = "github:snowfallorg/lib";
+    snowfall-lib.inputs.nixpkgs.follows = "nixpkgs";
+
+    home-manager.url = "github:nix-community/home-manager";
+    home-manager.inputs.nixpkgs.follows = "nixpkgs";
+
+    sops-nix.url = "github:Mic92/sops-nix";
+    sops-nix.inputs.nixpkgs.follows = "nixpkgs";
+
+    disko.url = "github:nix-community/disko";
+    disko.inputs.nixpkgs.follows = "nixpkgs";
+
     impermanence.url = "github:nix-community/impermanence";
+
     nixos-hardware.url = "github:nixos/nixos-hardware";
-    nix-index-database = {
-      url = "github:nix-community/nix-index-database";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
-    nixos-wsl = {
-      url = "github:nix-community/NixOS-WSL/main";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
-    stylix = {
-      url = "github:danth/stylix";
-      inputs = {
-        home-manager.follows = "home-manager";
-        nixpkgs.follows = "nixpkgs";
-      };
+
+    nix-index-database.url = "github:nix-community/nix-index-database";
+    nix-index-database.inputs.nixpkgs.follows = "nixpkgs";
+
+    nixos-wsl.url = "github:nix-community/NixOS-WSL/main";
+    nixos-wsl.inputs.nixpkgs.follows = "nixpkgs";
+
+    stylix.url = "github:danth/stylix";
+    stylix.inputs = {
+      home-manager.follows = "home-manager";
+      nixpkgs.follows = "nixpkgs";
     };
   };
 
@@ -42,21 +45,13 @@
     lib.mkFlake {
       systems = {
         modules.nixos = with inputs; [
-          home-manager.nixosModules.home-manager
-          stylix.nixosModules.stylix
-          impermanence.nixosModules.impermanence
+          disko.nixosModules.disko
         ];
-        hosts = {
-          cam-laptop.modules = with inputs; [
-            nixos-hardware.nixosModules.framework-13-7040-amd
-          ];
-        };
+        hosts.cam-laptop.modules = with inputs; [
+          nixos-hardware.nixosModules.framework-13-7040-amd
+        ];
       };
-      home.modules = with inputs; [
-        impermanence.nixosModules.home-manager.impermanence
-      ];
 
       channels-config.allowUnfree = true;
-
     };
 }

@@ -12,9 +12,7 @@ in
 with lib;
 with lib.${namespace};
 {
-  imports = [
-    inputs.nixos-wsl.nixosModules.default
-  ];
+  imports = [ inputs.nixos-wsl.nixosModules.default ];
 
   options.${namespace}.wsl.enable = mkEnableOption "wsl";
 

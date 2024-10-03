@@ -14,6 +14,7 @@ in
 {
   imports = [
     ./configuration.nix
+    # ./disko.nix
   ];
 
   ${namespace} = {

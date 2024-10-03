@@ -6,32 +6,37 @@
 }:
 let
   cfg = config.${namespace};
-  realdebridMount = "/mnt/remote/realdebrid/torrents/";
-  baseWatch = "/mnt/symlinks";
-  radarrPath = "${baseWatch}/radarr";
-  sonarrPath = "${baseWatch}/sonarr";
+  path = "${cfg.arrs.statePath}";
+  user = "cameron";
+  group = "media";
 in
 with lib;
 with lib.${namespace};
 {
-  options.${namespace}.arrs.enable = mkEnableOption "arrs stack";
+  options.${namespace}.arrs = {
+    enable = mkEnableOption "arrs stack";
+    statePath = mkOption {
+      type = types.str;
+      default = "/media/arrs";
+      description = "The location of the mounts and media files";
+    };
+  };
 
   config = mkIf cfg.arrs.enable {
-    users.groups.media.members = [ "cameron" ];
+    users.groups.${group}.members = [ "${user}" ];
 
     virtualisation.oci-containers.containers = {
       "blackhole" = {
         image = "ghcr.io/westsurname/scripts/blackhole:latest";
         environmentFiles = [ /var/lib/blackhole/.env ];
         environment = {
-          BLACKHOLE_BASE_WATCH_PATH = "${baseWatch}";
+          BLACKHOLE_BASE_WATCH_PATH = "/mnt/symlinks";
         };
         volumes = [
-          "/mnt:/mnt:rw"
+          "${path}:/mnt:rw"
           "/var/cache/blackhole/logs:/app/logs:rw"
-          "${realdebridMount}:${realdebridMount}:rw"
-          "${radarrPath}:${radarrPath}:rw"
-          "${sonarrPath}:${sonarrPath}:rw"
+          "${path}/remote/realdebrid/torrents:/mnt/remote/realdebrid/torrents:rw"
+          "${path}/symlinks:/mnt/symlinks:rw"
         ];
         dependsOn = [ "rclone" ];
         log-driver = "journald";
@@ -44,8 +49,8 @@ with lib.${namespace};
         };
         volumes = [
           "/var/lib/zurg/rclone.conf:/config/rclone/rclone.conf:rw"
-          "/mnt:/mnt:rw"
-          "/mnt/remote/realdebrid:/data:rw,rshared"
+          "${path}:/mnt:rw"
+          "${path}/remote/realdebrid:/data:rw,rshared"
         ];
         cmd = [
           "mount"
@@ -53,8 +58,6 @@ with lib.${namespace};
           "/data"
           "--allow-non-empty"
           "--allow-other"
-          "--uid=1000"
-          "--gid=1000"
           "--umask=002"
           "--dir-cache-time"
           "10s"
@@ -82,25 +85,21 @@ with lib.${namespace};
       };
     };
 
-    services = {
-      jellyfin = {
-        enable = true;
-        user = "cameron";
-        group = "media";
+    services =
+      let
+        enable = {
+          enable = true;
+          user = "${user}";
+          group = "${group}";
+        };
+      in
+      {
+        jellyfin = enable;
+        jellyseerr = enabled;
+        radarr = enable;
+        sonarr = enable;
+        prowlarr = enabled;
       };
-      jellyseerr = enabled;
-      radarr = {
-        enable = true;
-        user = "cameron";
-        group = "media";
-      };
-      sonarr = {
-        enable = true;
-        user = "cameron";
-        group = "media";
-      };
-      prowlarr = enabled;
-    };
 
     systemd = {
       services =
@@ -148,6 +147,20 @@ with lib.${namespace};
         unitConfig.Description = "Root target for arrs stack.";
         wantedBy = [ "multi-user.target" ];
       };
+
+      tmpfiles.rules = [
+        "d ${path} - ${user} ${group} -"
+        "d ${path}/jellyfin - ${user} ${group} -"
+        "d ${path}/jellyfin/movies - ${user} ${group} -"
+        "d ${path}/jellyfin/shows - ${user} ${group} -"
+        "d ${path}/remote - ${user} ${group} -"
+        "d ${path}/remote/realdebrid - ${user} ${group} -"
+        "d ${path}/symlinks - ${user} ${group} -"
+        "d ${path}/symlinks/radarr - ${user} ${group} -"
+        "d ${path}/symlinks/sonarr - ${user} ${group} -"
+        "d ${path}/symlinks/radarr/completed - ${user} ${group} -"
+        "d ${path}/symlinks/sonarr/completed - ${user} ${group} -"
+      ];
     };
 
     environment.persistence.${cfg.impermanence.path} = mkIf cfg.impermanence.enable {
@@ -158,6 +171,8 @@ with lib.${namespace};
         "/var/lib/radarr"
         "/var/lib/sonarr"
         "/var/lib/zurg"
+        "/var/cache/jellyfin"
+        "/var/cache/blackhole"
       ];
       files = [
         "/var/lib/blackhole/.env"

@@ -1,0 +1,13 @@
+keys:
+  - &admin_cameron age1a35mrj6kgp9uvchw8r59q8ma6wdyllmzfyn0ek56ez8jag4gfu4q6rkuuq
+  - &admin_cshearer age1vfq6fselrwr9cl3udvx96ldpakzfdhaf8rl5sl9ztg5heq8pjswserwwhe
+  - &machine_cam-desktop age1pzsyqcmx4c445pvjyjt0zm84eev3wewwyw6swq44emy8ctn4hfuqhc4dyh
+  - &machine_nixos_wsl age15sehvxxhnusnhs486we2sznz4736prpf4g5r7ynrycng5xk7f5yss670au
+creation_rules:
+  - path_regex: secrets/[^/]+\.(yaml|json|env|ini)$
+    key_groups:
+      - age:
+          - *admin_cameron
+          - *admin_cshearer
+          - *machine_cam-desktop
+          - *machine_nixos_wsl

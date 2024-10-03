@@ -12,6 +12,8 @@ in
 with lib;
 with lib.${namespace};
 {
+  imports = [ inputs.impermanence.nixosModules.impermanence ];
+
   options.${namespace}.impermanence = {
     enable = mkEnableOption "impermanence";
     path = mkOption {

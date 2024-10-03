@@ -13,6 +13,8 @@ in
 with lib;
 with lib.${namespace};
 {
+  imports = [ inputs.stylix.nixosModules.stylix ];
+
   options.${namespace}.stylix.enable = mkEnableOption "stylix";
 
   config.stylix = mkIf cfg.enable {

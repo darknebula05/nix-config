@@ -29,7 +29,6 @@ with lib.${namespace};
       "compress-force=zstd"
       "noatime"
     ];
-    "/nix/persist".options = [ "compress-force=zstd" ];
   };
 
   networking = {

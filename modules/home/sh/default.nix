@@ -12,9 +12,7 @@ in
 with lib;
 with lib.${namespace};
 {
-  imports = [
-    inputs.nix-index-database.hmModules.nix-index
-  ];
+  imports = [ inputs.nix-index-database.hmModules.nix-index ];
 
   options.${namespace}.sh.enable = mkEnableOption "sh";
 
