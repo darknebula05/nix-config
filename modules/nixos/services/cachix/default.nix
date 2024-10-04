@@ -15,7 +15,6 @@ with lib.${namespace};
   options.${namespace}.services.cachix.enable = mkEnableOption "cachix";
 
   config = {
-    environment.systemPackages = [ pkgs.cachix ];
     services.cachix-agent.enable = mkIf cfg.enable true;
   };
 }

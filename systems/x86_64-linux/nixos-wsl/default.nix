@@ -16,6 +16,7 @@ with lib.${namespace};
   ${namespace} = {
     suites.common = enabled;
     wsl = enabled;
+    stylix = enabled;
     variables = {
       username = "cshearer";
       flakeDir = "/home/cshearer/dotfiles/nix";
