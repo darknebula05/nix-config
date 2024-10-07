@@ -18,10 +18,7 @@ in
   ];
 
   ${namespace} = {
-    suites = {
-      common = enabled;
-      desktop = enabled;
-    };
+    archetypes.workstation = enabled;
     services.arrs = enabled;
     variables = {
       username = "${user}";

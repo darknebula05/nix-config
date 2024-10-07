@@ -25,17 +25,11 @@ with lib.${namespace};
   users.users.cshearer = {
     extraGroups = [
       "wheel"
-      "docker"
     ];
     isNormalUser = true;
   };
 
   fonts.packages = with pkgs; [ fira-code-nerdfont ];
-
-  virtualisation.docker.rootless = {
-    enable = true;
-    setSocketVariable = true;
-  };
 
   services = {
     avahi = enabled;

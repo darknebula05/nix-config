@@ -17,10 +17,7 @@ in
   ];
 
   ${namespace} = {
-    suites = {
-      common = enabled;
-      desktop = enabled;
-    };
+    archetypes.workstation = enabled;
     variables = {
       username = "${user}";
       flakeDir = "/home/cameron/dotfiles/nix";

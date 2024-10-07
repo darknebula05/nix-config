@@ -1,5 +1,6 @@
 {
   lib,
+  pkgs,
   namespace,
   config,
   ...
@@ -25,63 +26,113 @@ with lib.${namespace};
   config = mkIf cfg.enable {
     users.groups.${group}.members = [ "${user}" ];
 
-    virtualisation.oci-containers.containers = {
-      "blackhole" = {
-        image = "ghcr.io/westsurname/scripts/blackhole:latest";
-        environmentFiles = [ /var/lib/blackhole/.env ];
-        environment = {
-          BLACKHOLE_BASE_WATCH_PATH = "/mnt/symlinks";
+    virtualisation = {
+      podman = {
+        enable = true;
+        autoPrune.enable = true;
+        dockerCompat = true;
+        defaultNetwork.settings = {
+          dns_enabled = true;
         };
-        volumes = [
-          "${path}:/mnt:rw"
-          "/var/cache/blackhole/logs:/app/logs:rw"
-          "${path}/remote/realdebrid/torrents:/mnt/remote/realdebrid/torrents:rw"
-          "${path}/symlinks:/mnt/symlinks:rw"
-        ];
-        dependsOn = [ "rclone" ];
-        log-driver = "journald";
-        extraOptions = [ "--network=host" ];
       };
-      "rclone" = {
-        image = "rclone/rclone:latest";
-        environment = {
-          "TZ" = "Etc/UTC";
+      oci-containers = {
+        backend = "podman";
+        containers = {
+          "rclone" = {
+            image = "rclone/rclone:latest";
+            volumes = [
+              "/var/lib/zurg/rclone.conf:/config/rclone/rclone.conf:rw"
+              "${path}:/mnt:rw"
+              "${path}/remote/realdebrid:/data:rw,rshared"
+            ];
+            cmd = [
+              "mount"
+              "zurg:"
+              "/data"
+              "--allow-non-empty"
+              "--allow-other"
+              "--umask=002"
+              "--dir-cache-time"
+              "10s"
+            ];
+            dependsOn = [ "zurg" ];
+            log-driver = "journald";
+            extraOptions = [
+              "--cap-add=SYS_ADMIN"
+              "--device=/dev/fuse:/dev/fuse:rwm"
+              "--security-opt=apparmor:unconfined"
+            ];
+          };
+          "riven" = {
+            image = "spoked/riven:latest";
+            environment = {
+              "PGID" = "1000";
+              "PUID" = "1000";
+              "RIVEN_DATABASE_HOST" = "postgresql+psycopg2://postgres:postgres@riven-db/riven";
+              "RIVEN_FORCE_ENV" = "true";
+            };
+            volumes = [
+              "/var/lib/riven/data:/riven/data:rw"
+              "${path}:${path}:rw"
+            ];
+            dependsOn = [
+              "riven-db"
+            ];
+            log-driver = "journald";
+            extraOptions = [
+              "--health-cmd=curl -s http://localhost:8080 >/dev/null || exit 1"
+              "--health-interval=30s"
+              "--health-retries=10"
+              "--health-timeout=10s"
+            ];
+          };
+          "riven-db" = {
+            image = "postgres:16.3-alpine3.20";
+            environment = {
+              "PGDATA" = "/var/lib/postgresql/data/pgdata";
+              "POSTGRES_DB" = "riven";
+              "POSTGRES_PASSWORD" = "postgres";
+              "POSTGRES_USER" = "postgres";
+            };
+            volumes = [
+              "/var/lib/riven/riven-db:/var/lib/postgresql/data/pgdata:rw"
+            ];
+            log-driver = "journald";
+            extraOptions = [
+              "--health-cmd=pg_isready -U postgres"
+              "--health-interval=10s"
+              "--health-retries=5"
+              "--health-timeout=5s"
+            ];
+          };
+          "riven-frontend" = {
+            image = "spoked/riven-frontend:latest";
+            environment = {
+              "BACKEND_URL" = "http://riven:8080";
+              "DATABASE_URL" = "postgres://postgres:postgres@riven-db/riven";
+              "DIALECT" = "postgres";
+              "ORIGIN" = "http://localhost:3000";
+            };
+            ports = [
+              "3000:3000/tcp"
+            ];
+            dependsOn = [
+              "riven"
+            ];
+            log-driver = "journald";
+          };
+          "zurg" = {
+            image = "ghcr.io/debridmediamanager/zurg-testing:v0.9.3-final";
+            volumes = [
+              "/var/lib/zurg/config.yml:/app/config.yml:rw"
+              "/var/lib/zurg/data:/app/data:rw"
+            ];
+            log-driver = "journald";
+            extraOptions = [
+              "--health-cmd=curl -f localhost:9999/dav/version.txt || exit 1"
+            ];
+          };
         };
-        volumes = [
-          "/var/lib/zurg/rclone.conf:/config/rclone/rclone.conf:rw"
-          "${path}:/mnt:rw"
-          "${path}/remote/realdebrid:/data:rw,rshared"
-        ];
-        cmd = [
-          "mount"
-          "zurg:"
-          "/data"
-          "--allow-non-empty"
-          "--allow-other"
-          "--umask=002"
-          "--dir-cache-time"
-          "10s"
-        ];
-        dependsOn = [ "zurg" ];
-        log-driver = "journald";
-        extraOptions = [
-          "--cap-add=SYS_ADMIN"
-          "--device=/dev/fuse:/dev/fuse:rwm"
-          "--network=host"
-          "--security-opt=apparmor:unconfined"
-        ];
-      };
-      "zurg" = {
-        image = "ghcr.io/debridmediamanager/zurg-testing:v0.9.3-final";
-        volumes = [
-          "/var/lib/zurg/config.yml:/app/config.yml:rw"
-          "/var/lib/zurg/data:/app/data:rw"
-        ];
-        log-driver = "journald";
-        extraOptions = [
-          "--health-cmd=curl -f localhost:9999/dav/version.txt || exit 1"
-          "--network=host"
-        ];
       };
     };
 
@@ -96,23 +147,34 @@ with lib.${namespace};
       {
         jellyfin = enable;
         jellyseerr = enabled;
-        radarr = enable;
-        sonarr = enable;
-        prowlarr = enabled;
       };
 
     systemd = {
       services =
         let
-          afterBlackhole = {
-            after = [ "podman-blackhole.service" ];
-            requires = [ "podman-blackhole.service" ];
+          afterZurg = {
+            after = [ "podman-zurg.service" ];
+            requires = [ "podman-zurg.service" ];
             partOf = [ "arrs-root.target" ];
             wantedBy = [ "arrs-root.target" ];
           };
         in
         {
-          "podman-blackhole" = {
+          "podman-riven" = {
+            serviceConfig = {
+              Restart = lib.mkOverride 500 "always";
+            };
+            partOf = [ "arrs-root.target" ];
+            wantedBy = [ "arrs-root.target" ];
+          };
+          "podman-riven-db" = {
+            serviceConfig = {
+              Restart = lib.mkOverride 500 "no";
+            };
+            partOf = [ "arrs-root.target" ];
+            wantedBy = [ "arrs-root.target" ];
+          };
+          "podman-riven-frontend" = {
             serviceConfig = {
               Restart = lib.mkOverride 500 "always";
             };
@@ -133,21 +195,16 @@ with lib.${namespace};
             partOf = [ "arrs-root.target" ];
             wantedBy = [ "arrs-root.target" ];
           };
-          jellyfin = afterBlackhole;
-          jellyseerr = afterBlackhole;
-          radarr = afterBlackhole;
-          sonarr = afterBlackhole;
-          prowlarr = afterBlackhole;
+          jellyfin = afterZurg;
+          jellyseerr = afterZurg;
         };
 
-      # Root service
-      # When started, this will automatically create all resources and start
-      # the containers. When stopped, this will teardown all resources.
       targets."arrs-root" = {
         unitConfig.Description = "Root target for arrs stack.";
         wantedBy = [ "multi-user.target" ];
       };
 
+      # create all paths for mounts
       tmpfiles.rules = [
         "d ${path} - ${user} ${group} -"
         "d ${path}/jellyfin - ${user} ${group} -"
@@ -155,11 +212,6 @@ with lib.${namespace};
         "d ${path}/jellyfin/shows - ${user} ${group} -"
         "d ${path}/remote - ${user} ${group} -"
         "d ${path}/remote/realdebrid - ${user} ${group} -"
-        "d ${path}/symlinks - ${user} ${group} -"
-        "d ${path}/symlinks/radarr - ${user} ${group} -"
-        "d ${path}/symlinks/sonarr - ${user} ${group} -"
-        "d ${path}/symlinks/radarr/completed - ${user} ${group} -"
-        "d ${path}/symlinks/sonarr/completed - ${user} ${group} -"
       ];
     };
 
@@ -167,17 +219,11 @@ with lib.${namespace};
       mkIf config.${namespace}.impermanence.enable
         {
           directories = [
+            "/var/cache/jellyfin"
             "/var/lib/jellyfin"
             "/var/lib/private/jellyseerr"
-            "/var/lib/private/prowlarr"
-            "/var/lib/radarr"
-            "/var/lib/sonarr"
+            "/var/lib/riven"
             "/var/lib/zurg"
-            "/var/cache/jellyfin"
-            "/var/cache/blackhole"
-          ];
-          files = [
-            "/var/lib/blackhole/.env"
           ];
         };
   };

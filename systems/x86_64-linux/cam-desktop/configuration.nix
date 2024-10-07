@@ -68,7 +68,6 @@ with lib.${namespace};
       "networkmanager"
       "wheel"
       "libvirtd"
-      "docker"
       "dialout"
     ];
     hashedPassword = "$6$kGHTJenH76uWjJqT$ElSPqGb2IZ8b7ybOYFAXLQIwYERSjSs.Ce4Vb5uOqLGP.C3m9CNGO03wMjemj5YEceX/92MjKdlKpZipvkxrP.";
@@ -91,9 +90,6 @@ with lib.${namespace};
       };
     };
     containers = enabled;
-    docker = {
-      enable = true;
-    };
   };
 
   environment.systemPackages = with pkgs; [
