@@ -1,4 +1,4 @@
-{ flake, lib, ... }:
+{ flake, ... }:
 {
-  imports = builtins.attrValues (lib.filterAttrs (n: _: n != "all") flake.homeModules);
+  imports = builtins.removeAttrs flake.nixosModules [ "all" ];
 }

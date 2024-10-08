@@ -18,11 +18,12 @@ with flake.lib;
   facter.reportPath = ./facter.json;
 
   camms = {
+    archetypes.server = enabled;
     facter = {
       enable = true;
       path = ./facter.json;
     };
-    archetypes.server = enabled;
+    home = enabled;
     impermanence = enabled;
     variables.username = "cameron";
   };
@@ -47,4 +48,6 @@ with flake.lib;
     "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIOTr+IuOrJF+tNJHjwHaNTMnV1PwbvuO+Z1XeXXIETeq cshearer@nixos-wsl"
     "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIJMumZUYRobSetz6wCJAIxryfbTUNf6fnGZU8P5RCcsW cameron@cam-desktop"
   ];
+
+  system.stateVersion = "24.05";
 }

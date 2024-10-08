@@ -26,14 +26,11 @@ with flake.lib;
     };
   };
 
-  config = {
-    camms.sops.enable = mkDefault true;
-    sops = mkIf cfg.enable {
-      inherit (cfg) defaultSopsFile;
-      age = {
-        inherit (cfg) sshKeyPaths;
-        keyFile = "${config.users.users.${config.camms.variables.username}.home}/.config/sops/age/keys.txt";
-      };
+  config.sops = mkIf cfg.enable {
+    inherit (cfg) defaultSopsFile;
+    age = {
+      inherit (cfg) sshKeyPaths;
+      keyFile = "${config.users.users.${config.camms.variables.username}.home}/.config/sops/age/keys.txt";
     };
   };
 }

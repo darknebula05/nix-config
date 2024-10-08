@@ -21,6 +21,10 @@ in
   camms = {
     archetypes.workstation = enabled;
     home.path = ./home.nix;
+    user.extraGroups = [
+      "networkmanager"
+      "libvirtd"
+    ];
     variables = {
       username = "${user}";
       flakeDir = "/home/cameron/dotfiles/nix";
@@ -48,17 +52,6 @@ in
   hardware = {
     bluetooth = enabled;
     graphics = enabled;
-  };
-
-  users.defaultUserShell = pkgs.fish;
-  users.users.${config.camms.variables.username} = {
-    isNormalUser = true;
-    extraGroups = [
-      "networkmanager"
-      "wheel"
-      "libvirtd"
-    ];
-    hashedPassword = "$6$kGHTJenH76uWjJqT$ElSPqGb2IZ8b7ybOYFAXLQIwYERSjSs.Ce4Vb5uOqLGP.C3m9CNGO03wMjemj5YEceX/92MjKdlKpZipvkxrP.";
   };
 
   programs = {

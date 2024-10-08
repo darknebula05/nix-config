@@ -36,13 +36,6 @@ with flake.lib;
   };
 
   networking.hostName = "nixos-wsl";
-  users.defaultUserShell = pkgs.fish;
-  users.users.cshearer = {
-    extraGroups = [
-      "wheel"
-    ];
-    isNormalUser = true;
-  };
 
   fonts.packages = with pkgs; [ fira-code-nerdfont ];
 

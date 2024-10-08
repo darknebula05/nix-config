@@ -26,10 +26,10 @@ with flake.lib;
     };
   };
 
-  config.home-manager = mkIf (cfg.enable && cfg.path != null) {
+  config.home-manager = mkIf cfg.enable {
     useUserPackages = true;
     useGlobalPkgs = true;
-    users.${cfg.name} = import cfg.path;
+    users.${cfg.name} = mkIf (cfg.path != null) (import cfg.path);
     sharedModules = [ flake.homeModules.all ];
     extraSpecialArgs = {
       inherit flake inputs;

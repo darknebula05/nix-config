@@ -16,9 +16,11 @@ with flake.lib;
 
   config = mkIf cfg.enable {
     camms = {
+      nix = mkDefault enabled;
       services.cachix = mkDefault enabled;
       services.tailscale = mkDefault enabled;
-      nix = mkDefault enabled;
+      sops = mkDefault enabled;
+      user = mkDefault enabled;
     };
   };
 }
