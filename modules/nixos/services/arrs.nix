@@ -66,8 +66,6 @@ with flake.lib;
           "riven" = {
             image = "spoked/riven:latest";
             environment = {
-              "PGID" = "1000";
-              "PUID" = "1000";
               "RIVEN_DATABASE_HOST" = "postgresql+psycopg2://postgres:postgres@riven-db/riven";
               "RIVEN_FORCE_ENV" = "true";
             };
