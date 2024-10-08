@@ -9,13 +9,6 @@
 with lib;
 with lib.${namespace};
 {
-  imports = [
-    ./hardware-configuration.nix
-    # ./nginx.nix
-  ];
-  hardware.graphics = {
-    enable = true;
-  };
   programs = {
     nix-ld = enabled;
   };

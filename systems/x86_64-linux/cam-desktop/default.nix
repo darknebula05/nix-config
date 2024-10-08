@@ -14,8 +14,10 @@ in
 {
   imports = [
     ./configuration.nix
-    # ./disko.nix
+    ./disko.nix
   ];
+
+  facter.reportPath = ./facter.json;
 
   ${namespace} = {
     archetypes.workstation = enabled;

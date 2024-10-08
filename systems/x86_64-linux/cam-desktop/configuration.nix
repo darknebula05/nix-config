@@ -9,18 +9,17 @@
 with lib;
 with lib.${namespace};
 {
-  imports = [
-    # Include the results of the hardware scan.
-    ./hardware-configuration.nix
-  ];
-
-  boot.loader.systemd-boot = enabled;
-  boot.loader.efi.canTouchEfiVariables = true;
-  boot.supportedFilesystems = [
-    "btrfs"
-    "zfs"
-  ];
-  boot.zfs.forceImportRoot = false;
+  boot = {
+    loader.systemd-boot = enabled;
+    loader.efi.canTouchEfiVariables = true;
+    supportedFilesystems = [
+      "btrfs"
+      "zfs"
+    ];
+    zfs.forceImportRoot = false;
+    binfmt.emulatedSystems = [ "aarch64-linux" ];
+  };
+  nix.settings.extra-platforms = config.boot.binfmt.emulatedSystems;
 
   fileSystems = {
     "/".options = [ "compress-force=zstd" ];

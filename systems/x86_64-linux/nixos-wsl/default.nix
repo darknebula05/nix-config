@@ -13,6 +13,8 @@ with lib.${namespace};
     ./configuration.nix
   ];
 
+  facter.reportPath = ./facter.json;
+
   ${namespace} = {
     suites.common = enabled;
     wsl = enabled;

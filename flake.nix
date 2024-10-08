@@ -4,6 +4,8 @@
   inputs = {
     nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
 
+    nixos-facter-modules.url = "github:numtide/nixos-facter-modules";
+
     snowfall-lib.url = "github:snowfallorg/lib";
     snowfall-lib.inputs.nixpkgs.follows = "nixpkgs";
 
@@ -46,6 +48,7 @@
       systems = {
         modules.nixos = with inputs; [
           disko.nixosModules.disko
+          nixos-facter-modules.nixosModules.facter
         ];
         hosts.cam-laptop.modules = with inputs; [
           nixos-hardware.nixosModules.framework-13-7040-amd
