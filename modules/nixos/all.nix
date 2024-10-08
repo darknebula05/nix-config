@@ -1,4 +1,4 @@
 { flake, ... }:
 {
-  imports = builtins.removeAttrs flake.nixosModules [ "all" ];
+  imports = builtins.attrValues (builtins.removeAttrs flake.nixosModules [ "all" ]);
 }
