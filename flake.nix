@@ -4,10 +4,9 @@
   inputs = {
     nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
 
-    nixos-facter-modules.url = "github:numtide/nixos-facter-modules";
+    blueprint.url = "github:numtide/blueprint";
 
-    snowfall-lib.url = "github:snowfallorg/lib";
-    snowfall-lib.inputs.nixpkgs.follows = "nixpkgs";
+    nixos-facter-modules.url = "github:numtide/nixos-facter-modules";
 
     home-manager.url = "github:nix-community/home-manager";
     home-manager.inputs.nixpkgs.follows = "nixpkgs";
@@ -37,24 +36,12 @@
 
   outputs =
     inputs:
-    let
-      lib = inputs.snowfall-lib.mkLib {
-        inherit inputs;
-        src = ./.;
-        snowfall.namespace = "camms";
-      };
-    in
-    lib.mkFlake {
-      systems = {
-        modules.nixos = with inputs; [
-          disko.nixosModules.disko
-          nixos-facter-modules.nixosModules.facter
-        ];
-        hosts.cam-laptop.modules = with inputs; [
-          nixos-hardware.nixosModules.framework-13-7040-amd
-        ];
-      };
-
-      channels-config.allowUnfree = true;
+    inputs.blueprint {
+      inherit inputs;
+      systems = [
+        "aarch64-linux"
+        "x86_64-linux"
+      ];
+      nixpkgs.config.allowUnfree = true;
     };
 }

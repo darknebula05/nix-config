@@ -11,5 +11,6 @@ with flake.lib;
     browser = enabled;
     hyprland = enabled;
     programs = enabled;
+    variables.ewwDir = ./eww;
   };
 }

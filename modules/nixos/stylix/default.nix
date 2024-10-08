@@ -1,21 +1,21 @@
 {
+  flake,
   lib,
   pkgs,
   inputs,
-  namespace,
   config,
   ...
 }:
 let
-  cfg = config.${namespace}.stylix;
+  cfg = config.camms.stylix;
   theme = "catppuccin-mocha";
 in
 with lib;
-with lib.${namespace};
+with flake.lib;
 {
   imports = [ inputs.stylix.nixosModules.stylix ];
 
-  options.${namespace}.stylix.enable = mkEnableOption "stylix";
+  options.camms.stylix.enable = mkEnableOption "stylix";
 
   config.stylix = mkIf cfg.enable {
     enable = true;

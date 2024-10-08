@@ -1,11 +1,11 @@
 {
+  flake,
   lib,
   pkgs,
-  namespace,
   ...
 }:
 with lib;
-with lib.${namespace};
+with flake.lib;
 {
   camms = {
     browser = enabled;
