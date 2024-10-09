@@ -8,7 +8,7 @@
 let
   cfg = config.camms.services.arrs;
   path = "${cfg.statePath}";
-  user = "cameron";
+  user = "media";
   group = "media";
 in
 with lib;
@@ -24,7 +24,28 @@ with flake.lib;
   };
 
   config = mkIf cfg.enable {
-    users.groups.${group}.members = [ "${user}" ];
+    users.users.${user} = {
+      isSystemUser = true;
+      uid = 10000;
+      inherit group;
+    };
+    users.groups.${group} = {
+      gid = 10000;
+      members = [ config.camms.variables.username ];
+    };
+
+    sops.secrets =
+      let
+        file = {
+          owner = config.users.users.${user}.name;
+          group = config.users.users.${user}.group;
+          sopsFile = "${flake}/secrets/arrs.yaml";
+        };
+      in
+      mkIf config.camms.sops.enable {
+        "media/riven.env" = file;
+        "media/zurg-config.yml" = file;
+      };
 
     virtualisation = {
       podman = {
@@ -66,9 +87,14 @@ with flake.lib;
           "riven" = {
             image = "spoked/riven:latest";
             environment = {
-              "RIVEN_DATABASE_HOST" = "postgresql+psycopg2://postgres:postgres@riven-db/riven";
+              "PUID" = "${builtins.toString config.users.users.${user}.uid}";
+              "PGID" = "${builtins.toString config.users.groups.${group}.gid}";
               "RIVEN_FORCE_ENV" = "true";
+              "RIVEN_SYMLINK_RCLONE_PATH" = "${path}/remote/realdebrid/torrents";
+              "RIVEN_SYMLINK_LIBRARY_PATH" = "${path}/jellyfin";
+              "RIVEN_DATABASE_HOST" = "postgresql+psycopg2://postgres:postgres@riven-db/riven";
             };
+            environmentFiles = mkIf config.camms.sops.enable [ config.sops.secrets."media/riven.env".path ];
             volumes = [
               "/var/lib/riven/data:/riven/data:rw"
               "${path}:${path}:rw"
@@ -122,7 +148,7 @@ with flake.lib;
           "zurg" = {
             image = "ghcr.io/debridmediamanager/zurg-testing:v0.9.3-final";
             volumes = [
-              "/var/lib/zurg/config.yml:/app/config.yml:rw"
+              "${config.sops.secrets."media/zurg-config.yml".path}:/app/config.yml:rw"
               "/var/lib/zurg/data:/app/data:rw"
             ];
             log-driver = "journald";
@@ -134,18 +160,13 @@ with flake.lib;
       };
     };
 
-    services =
-      let
-        enable = {
-          enable = true;
-          user = "${user}";
-          group = "${group}";
-        };
-      in
-      {
-        jellyfin = enable;
-        jellyseerr = enabled;
+    services = {
+      jellyfin = {
+        enable = true;
+        inherit user group;
       };
+      jellyseerr = enabled;
+    };
 
     systemd = {
       services =

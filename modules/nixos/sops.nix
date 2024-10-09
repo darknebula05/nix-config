@@ -26,8 +26,8 @@ with flake.lib;
       default = "${inputs.self}/secrets/default.yaml";
     };
     keyFile = mkOption {
-      type = types.str;
-      default = "/var/lib/sops-nix/key.txt";
+      type = types.nullOr types.str;
+      default = null;
     };
   };
 
@@ -35,9 +35,9 @@ with flake.lib;
     sops = {
       inherit (cfg) defaultSopsFile;
       age = {
-        inherit (cfg) sshKeyPaths keyFile;
+        inherit (cfg) sshKeyPaths;
+        keyFile = mkIf (cfg.keyFile != null) cfg.keyFile;
       };
     };
-    camms.sops.keyFile = mkIf imp.enable "${imp.path}/var/lib/sops-nix/key.txt";
   };
 }

@@ -32,6 +32,10 @@ with flake.lib;
     ];
     files = [
       "/etc/machine-id"
+      "/etc/ssh/id_host_ed25519_key"
+      "/etc/ssh/id_host_ed25519_key.pub"
+      "/etc/ssh/id_host_rsa_key"
+      "/etc/ssh/id_host_rsa_key.pub"
     ];
   };
 
