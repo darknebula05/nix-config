@@ -43,6 +43,6 @@ with flake.lib;
       };
     };
     camms.user.hashedPasswordFile = mkIf sops (mkDefault config.sops.secrets.hashed_password.path);
-    sops.secrets.hashed_password = mkIf sops { };
+    sops.secrets.hashed_password.neededForUsers = mkIf sops true;
   };
 }
