@@ -18,7 +18,7 @@ with flake.lib;
     enable = mkEnableOption "impermanence";
     path = mkOption {
       type = types.str;
-      default = "/nix/persist/system";
+      default = "/nix/persist";
     };
   };
   config.environment.persistence.${cfg.path} = mkIf cfg.enable {

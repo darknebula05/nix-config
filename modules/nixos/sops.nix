@@ -19,7 +19,14 @@ with flake.lib;
     enable = mkEnableOption "sops";
     sshKeyPaths = mkOption {
       type = with types; listOf str;
-      default = [ "/etc/ssh/ssh_host_ed25519_key" ];
+      default =
+        let
+          prefix = (if imp.enable then imp.path else "");
+        in
+        [
+          "${prefix}/etc/ssh/ssh_host_ed25519_key"
+          "${prefix}/etc/ssh/ssh_host_rsa_key"
+        ];
     };
     defaultSopsFile = mkOption {
       type = types.path;
