@@ -41,6 +41,7 @@ with flake.lib;
         extraGroups = optional (cfg.admin) "wheel" ++ cfg.extraGroups;
         inherit (cfg) hashedPasswordFile;
       };
+      users.root.hashedPassword = "$6$Wn08sMD6v9xuAkRA$KOEYdp9ZeyJ/FSxNZ9ViH6/qvZwbRQ5GZuEdMVdfjAIdprWlXN8XGaI/nJCc0ByHtiwhKcwem9BHWRGGWG6RB1";
     };
     camms.user.hashedPasswordFile = mkIf sops (mkDefault config.sops.secrets.hashed_password.path);
     sops.secrets.hashed_password.neededForUsers = mkIf sops true;

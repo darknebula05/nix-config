@@ -104,6 +104,7 @@ in
     dive
     distrobox
     adwaita-icon-theme
+    git
     helvum
     iproute2
     podman-compose

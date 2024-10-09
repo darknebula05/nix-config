@@ -8,6 +8,7 @@
 }:
 let
   cfg = config.camms.sops;
+  imp = config.camms.impermanence;
 in
 with lib;
 with flake.lib;
@@ -24,13 +25,19 @@ with flake.lib;
       type = types.path;
       default = "${inputs.self}/secrets/default.yaml";
     };
+    keyFile = mkOption {
+      type = types.str;
+      default = "/var/lib/sops-nix/key.txt";
+    };
   };
 
-  config.sops = mkIf cfg.enable {
-    inherit (cfg) defaultSopsFile;
-    age = {
-      inherit (cfg) sshKeyPaths;
-      keyFile = "${config.users.users.${config.camms.variables.username}.home}/.config/sops/age/keys.txt";
+  config = mkIf cfg.enable {
+    sops = {
+      inherit (cfg) defaultSopsFile;
+      age = {
+        inherit (cfg) sshKeyPaths keyFile;
+      };
     };
+    camms.sops.keyFile = mkIf imp.enable "${imp.path}/var/lib/sops-nix/key.txt";
   };
 }

@@ -31,9 +31,12 @@ in
     };
   };
 
-  boot.loader.systemd-boot = enabled;
-  boot.loader.efi.canTouchEfiVariables = true;
-  boot.kernelPackages = pkgs.linuxPackages_latest;
+  boot = {
+    loader.systemd-boot = enabled;
+    loader.efi.canTouchEfiVariables = true;
+    binfmt.emulatedSystems = [ "aarch64-linux" ];
+  };
+  nix.settings.extra-platforms = config.boot.binfmt.emulatedSystems;
 
   networking.hostName = "cam-laptop";
   networking.networkmanager = enabled;
@@ -64,8 +67,9 @@ in
   virtualisation.libvirtd = enabled;
 
   environment.systemPackages = with pkgs; [
-    brightnessctl
     adwaita-icon-theme
+    brightnessctl
+    git
     helvum
     iproute2
     socat
