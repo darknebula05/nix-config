@@ -10,6 +10,8 @@ let
   path = "${cfg.statePath}";
   user = "media";
   group = "media";
+  uid = builtins.toString config.users.users.${user}.uid;
+  gid = builtins.toString config.users.groups.${group}.gid;
 in
 with lib;
 with flake.lib;
@@ -47,6 +49,11 @@ with flake.lib;
         "media/zurg-config.yml" = file;
       };
 
+    networking.firewall.interfaces.podman0.allowedTCPPorts = [
+      5055
+      8096
+    ];
+
     virtualisation = {
       podman = {
         enable = true;
@@ -75,6 +82,23 @@ with flake.lib;
               "--umask=002"
               "--dir-cache-time"
               "10s"
+              "--vfs-cache-mode"
+              "full"
+              "--vfs-read-chunk-size"
+              "8M"
+              "--vfs-read-chunk-size-limit"
+              "2G"
+              "--buffer-size"
+              "16M"
+              "--vfs-cache-max-age"
+              "150h"
+              "--vfs-cache-max-size"
+              "20G"
+              "--vfs-fast-fingerprint"
+              "--uid"
+              "${uid}"
+              "--gid"
+              "${gid}"
             ];
             dependsOn = [ "zurg" ];
             log-driver = "journald";
@@ -87,14 +111,17 @@ with flake.lib;
           "riven" = {
             image = "spoked/riven:latest";
             environment = {
-              "PUID" = "${builtins.toString config.users.users.${user}.uid}";
-              "PGID" = "${builtins.toString config.users.groups.${group}.gid}";
+              "PUID" = "${uid}";
+              "PGID" = "${gid}";
               "RIVEN_FORCE_ENV" = "true";
               "RIVEN_SYMLINK_RCLONE_PATH" = "${path}/remote/realdebrid/torrents";
               "RIVEN_SYMLINK_LIBRARY_PATH" = "${path}/jellyfin";
               "RIVEN_DATABASE_HOST" = "postgresql+psycopg2://postgres:postgres@riven-db/riven";
             };
             environmentFiles = mkIf config.camms.sops.enable [ config.sops.secrets."media/riven.env".path ];
+            ports = [
+              "8080:8080/tcp"
+            ];
             volumes = [
               "/var/lib/riven/data:/riven/data:rw"
               "${path}:${path}:rw"
