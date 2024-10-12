@@ -3,6 +3,7 @@
   lib,
   pkgs,
   config,
+  perSystem,
   ...
 }:
 let
@@ -26,6 +27,20 @@ with flake.lib;
   };
 
   config = mkIf cfg.enable {
+    camms.services.riven = {
+      enable = true;
+      inherit user group;
+      envFile = config.sops.secrets."media/riven.env".path;
+      environment = {
+        "RIVEN_FORCE_ENV" = "true";
+        "RIVEN_SYMLINK_RCLONE_PATH" = "${path}/remote/realdebrid/torrents";
+        "RIVEN_SYMLINK_LIBRARY_PATH" = "${path}/jellyfin";
+        "RIVEN_DATABASE_HOST" = "postgresql+psycopg2://postgres:postgres@localhost/riven";
+        "RIVEN_UPDATERS_JELLYFIN_URL" = "http://localhost:8096";
+        "RIVEN_CONTENT_OVERSEERR_URL" = "http://localhost:5055";
+      };
+    };
+
     users.users.${user} = {
       isSystemUser = true;
       uid = 10000;
@@ -66,77 +81,6 @@ with flake.lib;
       oci-containers = {
         backend = "podman";
         containers = {
-          "rclone" = {
-            image = "rclone/rclone:latest";
-            volumes = [
-              "/var/lib/zurg/rclone.conf:/config/rclone/rclone.conf:rw"
-              "${path}:/mnt:rw"
-              "${path}/remote/realdebrid:/data:rw,rshared"
-            ];
-            cmd = [
-              "mount"
-              "zurg:"
-              "/data"
-              "--allow-non-empty"
-              "--allow-other"
-              "--umask=002"
-              "--dir-cache-time"
-              "10s"
-              "--vfs-cache-mode"
-              "full"
-              "--vfs-read-chunk-size"
-              "8M"
-              "--vfs-read-chunk-size-limit"
-              "2G"
-              "--buffer-size"
-              "16M"
-              "--vfs-cache-max-age"
-              "150h"
-              "--vfs-cache-max-size"
-              "20G"
-              "--vfs-fast-fingerprint"
-              "--uid"
-              "${uid}"
-              "--gid"
-              "${gid}"
-            ];
-            dependsOn = [ "zurg" ];
-            log-driver = "journald";
-            extraOptions = [
-              "--cap-add=SYS_ADMIN"
-              "--device=/dev/fuse:/dev/fuse:rwm"
-              "--security-opt=apparmor:unconfined"
-            ];
-          };
-          "riven" = {
-            image = "spoked/riven:latest";
-            environment = {
-              "PUID" = "${uid}";
-              "PGID" = "${gid}";
-              "RIVEN_FORCE_ENV" = "true";
-              "RIVEN_SYMLINK_RCLONE_PATH" = "${path}/remote/realdebrid/torrents";
-              "RIVEN_SYMLINK_LIBRARY_PATH" = "${path}/jellyfin";
-              "RIVEN_DATABASE_HOST" = "postgresql+psycopg2://postgres:postgres@riven-db/riven";
-            };
-            environmentFiles = mkIf config.camms.sops.enable [ config.sops.secrets."media/riven.env".path ];
-            ports = [
-              "8080:8080/tcp"
-            ];
-            volumes = [
-              "/var/lib/riven/data:/riven/data:rw"
-              "${path}:${path}:rw"
-            ];
-            dependsOn = [
-              "riven-db"
-            ];
-            log-driver = "journald";
-            extraOptions = [
-              "--health-cmd=curl -s http://localhost:8080 >/dev/null || exit 1"
-              "--health-interval=30s"
-              "--health-retries=10"
-              "--health-timeout=10s"
-            ];
-          };
           "riven-db" = {
             image = "postgres:16.3-alpine3.20";
             environment = {
@@ -145,6 +89,9 @@ with flake.lib;
               "POSTGRES_PASSWORD" = "postgres";
               "POSTGRES_USER" = "postgres";
             };
+            ports = [
+              "5432:5432/tcp"
+            ];
             volumes = [
               "/var/lib/riven/riven-db:/var/lib/postgresql/data/pgdata:rw"
             ];
@@ -156,33 +103,22 @@ with flake.lib;
               "--health-timeout=5s"
             ];
           };
-          "riven-frontend" = {
-            image = "spoked/riven-frontend:latest";
-            environment = {
-              "BACKEND_URL" = "http://riven:8080";
-              "DATABASE_URL" = "postgres://postgres:postgres@riven-db/riven";
-              "DIALECT" = "postgres";
-              "ORIGIN" = "http://localhost:3000";
-            };
-            ports = [
-              "3000:3000/tcp"
-            ];
-            dependsOn = [
-              "riven"
-            ];
-            log-driver = "journald";
-          };
-          "zurg" = {
-            image = "ghcr.io/debridmediamanager/zurg-testing:v0.9.3-final";
-            volumes = [
-              "${config.sops.secrets."media/zurg-config.yml".path}:/app/config.yml:rw"
-              "/var/lib/zurg/data:/app/data:rw"
-            ];
-            log-driver = "journald";
-            extraOptions = [
-              "--health-cmd=curl -f localhost:9999/dav/version.txt || exit 1"
-            ];
-          };
+          # "riven-frontend" = {
+          #   image = "spoked/riven-frontend:latest";
+          #   environment = {
+          #     "BACKEND_URL" = "http://riven:8080";
+          #     "DATABASE_URL" = "postgres://postgres:postgres@riven-db/riven";
+          #     "DIALECT" = "postgres";
+          #     "ORIGIN" = "http://localhost:3000";
+          #   };
+          #   ports = [
+          #     "3000:3000/tcp"
+          #   ];
+          #   # dependsOn = [
+          #   #   "riven"
+          #   # ];
+          #   log-driver = "journald";
+          # };
         };
       };
     };
@@ -198,20 +134,44 @@ with flake.lib;
     systemd = {
       services =
         let
-          afterZurg = {
-            after = [ "podman-zurg.service" ];
-            requires = [ "podman-zurg.service" ];
+          afterRclone = {
+            after = [ "rclone.service" ];
+            requires = [ "rclone.service" ];
             partOf = [ "arrs-root.target" ];
             wantedBy = [ "arrs-root.target" ];
           };
         in
         {
-          "podman-riven" = {
-            serviceConfig = {
-              Restart = lib.mkOverride 500 "always";
-            };
+          "riven" = afterRclone;
+          "rclone" = {
+            description = "rclone mount for zurg";
+            after = [ "zurg.service" ];
+            requires = [ "zurg.service" ];
             partOf = [ "arrs-root.target" ];
-            wantedBy = [ "arrs-root.target" ];
+            serviceConfig = {
+              Type = "simple";
+              ExecStart = ''
+                ${getExe pkgs.rclone} mount zurg: ${path}/remote/realdebrid --config="/var/lib/zurg/rclone.conf" \
+                  --cache-dir=/tmp/rclone --allow-non-empty --allow-other --umask=002 --dir-cache-time 10s \
+                  --vfs-cache-mode full --vfs-read-chunk-size 8M --vfs-read-chunk-size-limit 2G --buffer-size 16M \
+                  --vfs-cache-max-age 150h --vfs-cache-max-size 20G --vfs-fast-fingerprint --uid ${uid} --gid ${gid}'';
+              Restart = "on-failure";
+            };
+          };
+          "zurg" = {
+            description = "zurg";
+            after = [ "network.target" ];
+            partOf = [ "arrs-root.target" ];
+            serviceConfig = {
+              Type = "simple";
+              User = user;
+              Group = group;
+              ExecStart = "${perSystem.self.zurg}/bin/zurg -c ${
+                config.sops.secrets."media/zurg-config.yml".path
+              }";
+              WorkingDirectory = "/var/lib/zurg";
+              Restart = "on-failure";
+            };
           };
           "podman-riven-db" = {
             serviceConfig = {
@@ -220,29 +180,8 @@ with flake.lib;
             partOf = [ "arrs-root.target" ];
             wantedBy = [ "arrs-root.target" ];
           };
-          "podman-riven-frontend" = {
-            serviceConfig = {
-              Restart = lib.mkOverride 500 "always";
-            };
-            partOf = [ "arrs-root.target" ];
-            wantedBy = [ "arrs-root.target" ];
-          };
-          "podman-rclone" = {
-            serviceConfig = {
-              Restart = lib.mkOverride 500 "always";
-            };
-            partOf = [ "arrs-root.target" ];
-            wantedBy = [ "arrs-root.target" ];
-          };
-          "podman-zurg" = {
-            serviceConfig = {
-              Restart = lib.mkOverride 500 "always";
-            };
-            partOf = [ "arrs-root.target" ];
-            wantedBy = [ "arrs-root.target" ];
-          };
-          jellyfin = afterZurg;
-          jellyseerr = afterZurg;
+          jellyfin = afterRclone;
+          jellyseerr = afterRclone;
         };
 
       targets."arrs-root" = {

@@ -16,6 +16,7 @@ with flake.lib;
   ];
 
   facter.reportPath = ./facter.json;
+  fileSystems."/nix/persist".neededForBoot = true;
 
   camms = {
     archetypes.server = enabled;
