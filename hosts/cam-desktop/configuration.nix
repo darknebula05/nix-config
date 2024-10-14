@@ -31,6 +31,7 @@ in
       "networkmanager"
       "libvirtd"
       "dialout"
+      "podman"
     ];
     variables = {
       username = "${user}";

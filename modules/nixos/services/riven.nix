@@ -14,7 +14,7 @@ with flake.lib;
 {
   options.camms.services.riven = {
     enable = mkEnableOption "riven service";
-    package = mkPackageOption pkgs "riven" { };
+    package = mkPackageOption perSystem.self "riven" { };
     dataDir = mkOption {
       type = types.str;
       default = "/var/lib/riven/data";
@@ -42,30 +42,55 @@ with flake.lib;
       type = types.anything;
       default = { };
     };
+
+    frontend = {
+      enable = mkEnableOption "riven frontend service" // {
+        default = true;
+      };
+      package = mkPackageOption perSystem.self "riven-frontend" { };
+      environment = mkOption {
+        type = types.anything;
+        default = { };
+      };
+    };
   };
 
   config = lib.mkIf cfg.enable {
-    camms.services.riven.package = perSystem.self.riven;
-
     systemd.tmpfiles.settings."10-riven".${cfg.dataDir}.d = {
       inherit (cfg) user group;
       mode = "0700";
     };
 
-    systemd.services.riven = {
-      description = "riven";
-      after = [ "network.target" ];
-      wantedBy = [ "multi-user.target" ];
-      inherit (cfg) environment;
+    systemd.services = {
+      riven = {
+        description = "riven";
+        after = [ "network.target" ];
+        wants = optional cfg.frontend.enable "riven-frontend.service";
+        wantedBy = [ "multi-user.target" ];
+        inherit (cfg) environment;
 
-      serviceConfig = {
-        Type = "simple";
-        User = cfg.user;
-        Group = cfg.group;
-        ExecStart = "${cfg.package}/bin/riven";
-        EnvironmentFile = mkIf (cfg.envFile != null) cfg.envFile;
-        BindPaths = [ "${cfg.dataDir}:${cfg.package}/share/riven/data" ];
-        Restart = "on-failure";
+        serviceConfig = {
+          Type = "simple";
+          User = cfg.user;
+          Group = cfg.group;
+          ExecStart = "${cfg.package}/bin/riven";
+          EnvironmentFile = mkIf (cfg.envFile != null) cfg.envFile;
+          BindPaths = [ "${cfg.dataDir}:${cfg.package}/share/riven/data" ];
+          Restart = "on-failure";
+        };
+      };
+      riven-frontend = mkIf cfg.frontend.enable {
+        description = "riven frontend";
+        after = [ "network.target" ];
+        wantedBy = [ "multi-user.target" ];
+        inherit (cfg.frontend) environment;
+        serviceConfig = {
+          Type = "simple";
+          User = cfg.user;
+          Group = cfg.group;
+          ExecStart = "${cfg.frontend.package}/bin/riven-frontend";
+          Restart = "on-failure";
+        };
       };
     };
   };

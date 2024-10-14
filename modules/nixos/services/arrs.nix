@@ -39,6 +39,12 @@ with flake.lib;
         "RIVEN_UPDATERS_JELLYFIN_URL" = "http://localhost:8096";
         "RIVEN_CONTENT_OVERSEERR_URL" = "http://localhost:5055";
       };
+      frontend.environment = {
+        "BACKEND_URL" = "http://localhost:8080";
+        "DATABASE_URL" = "postgres://postgres:postgres@localhost/riven";
+        "DIALECT" = "postgres";
+        "ORIGIN" = "http://localhost:3000";
+      };
     };
 
     users.users.${user} = {
@@ -64,62 +70,27 @@ with flake.lib;
         "media/zurg-config.yml" = file;
       };
 
-    networking.firewall.interfaces.podman0.allowedTCPPorts = [
-      5055
-      8096
-    ];
-
     virtualisation = {
-      podman = {
-        enable = true;
-        autoPrune.enable = true;
-        dockerCompat = true;
-        defaultNetwork.settings = {
-          dns_enabled = true;
+      podman.autoPrune.enable = true;
+      oci-containers.containers."riven-db" = {
+        image = "postgres:16.3-alpine3.20";
+        environment = {
+          "PGDATA" = "/var/lib/postgresql/data/pgdata";
+          "POSTGRES_DB" = "riven";
+          "POSTGRES_PASSWORD" = "postgres";
+          "POSTGRES_USER" = "postgres";
         };
-      };
-      oci-containers = {
-        backend = "podman";
-        containers = {
-          "riven-db" = {
-            image = "postgres:16.3-alpine3.20";
-            environment = {
-              "PGDATA" = "/var/lib/postgresql/data/pgdata";
-              "POSTGRES_DB" = "riven";
-              "POSTGRES_PASSWORD" = "postgres";
-              "POSTGRES_USER" = "postgres";
-            };
-            ports = [
-              "5432:5432/tcp"
-            ];
-            volumes = [
-              "/var/lib/riven/riven-db:/var/lib/postgresql/data/pgdata:rw"
-            ];
-            log-driver = "journald";
-            extraOptions = [
-              "--health-cmd=pg_isready -U postgres"
-              "--health-interval=10s"
-              "--health-retries=5"
-              "--health-timeout=5s"
-            ];
-          };
-          # "riven-frontend" = {
-          #   image = "spoked/riven-frontend:latest";
-          #   environment = {
-          #     "BACKEND_URL" = "http://riven:8080";
-          #     "DATABASE_URL" = "postgres://postgres:postgres@riven-db/riven";
-          #     "DIALECT" = "postgres";
-          #     "ORIGIN" = "http://localhost:3000";
-          #   };
-          #   ports = [
-          #     "3000:3000/tcp"
-          #   ];
-          #   # dependsOn = [
-          #   #   "riven"
-          #   # ];
-          #   log-driver = "journald";
-          # };
-        };
+        volumes = [
+          "/var/lib/riven/riven-db:/var/lib/postgresql/data/pgdata:rw"
+        ];
+        log-driver = "journald";
+        extraOptions = [
+          "--health-cmd=pg_isready -U postgres"
+          "--health-interval=10s"
+          "--health-retries=5"
+          "--health-timeout=5s"
+          "--network=host"
+        ];
       };
     };
 
@@ -143,6 +114,7 @@ with flake.lib;
         in
         {
           "riven" = afterRclone;
+          "riven-frontend" = afterRclone;
           "rclone" = {
             description = "rclone mount for zurg";
             after = [ "zurg.service" ];
