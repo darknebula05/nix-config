@@ -1,5 +1,4 @@
 {
-  flake,
   lib,
   pkgs,
   inputs,
@@ -11,7 +10,7 @@ let
   theme = "catppuccin-mocha";
 in
 with lib;
-with flake.lib;
+with lib.camms;
 {
   imports = [ inputs.stylix.nixosModules.stylix ];
 

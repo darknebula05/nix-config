@@ -4,8 +4,10 @@
   inputs = {
     nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
 
-    blueprint.url = "github:numtide/blueprint";
-    blueprint.inputs.nixpkgs.follows = "nixpkgs";
+    snowfall-lib = {
+      url = "github:snowfallorg/lib";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
 
     nixos-facter-modules.url = "github:numtide/nixos-facter-modules";
 
@@ -38,12 +40,18 @@
 
   outputs =
     inputs:
-    inputs.blueprint {
+    inputs.snowfall-lib.mkFlake {
       inherit inputs;
-      systems = [
-        "aarch64-linux"
-        "x86_64-linux"
+      src = ./.;
+      snowfall = {
+        namespace = "camms";
+      };
+      channels-config.allowUnfree = true;
+
+      overlays = [
+        inputs.poetry2nix.overlays.default
       ];
-      nixpkgs.config.allowUnfree = true;
+
+      alias.packages.default = "deploy";
     };
 }
