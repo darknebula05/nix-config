@@ -12,10 +12,6 @@ with lib.${namespace};
       enable = true;
       path = ./facter.json;
     };
-    # home = {
-    #   enable = true;
-    #   path = ./home.nix;
-    # };
     suites.common = enabled;
     wsl = enabled;
     stylix = enabled;

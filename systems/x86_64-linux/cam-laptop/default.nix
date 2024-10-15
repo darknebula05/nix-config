@@ -17,7 +17,6 @@ in
 
   ${namespace} = {
     archetypes.workstation = enabled;
-    home.path = ./home.nix;
     user.extraGroups = [
       "networkmanager"
       "libvirtd"

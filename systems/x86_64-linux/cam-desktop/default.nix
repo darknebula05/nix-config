@@ -22,7 +22,6 @@ in
       enable = true;
       path = ./facter.json;
     };
-    home.path = ./home.nix;
     archetypes.workstation = enabled;
     services.arrs = enabled;
     user.extraGroups = [
