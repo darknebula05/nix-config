@@ -1,4 +1,3 @@
-{ ... }:
 {
   imports = [
     ./server.nix

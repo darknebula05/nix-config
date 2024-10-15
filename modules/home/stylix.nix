@@ -1,5 +1,4 @@
 {
-  flake,
   lib,
   pkgs,
   inputs,
@@ -10,7 +9,6 @@ let
   cfg = config.camms.stylix;
 in
 with lib;
-with flake.lib;
 {
   options.camms.stylix.enable = mkEnableOption "stylix";
 
@@ -22,6 +20,6 @@ with flake.lib;
         name = "Adwaita";
       };
     };
-    qt = enabled;
+    qt.enable = true;
   };
 }

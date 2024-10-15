@@ -1,5 +1,5 @@
 {
-  flake,
+  ezModules,
   lib,
   pkgs,
   inputs,
@@ -10,8 +10,9 @@ let
   cfg = config.camms.default;
 in
 with lib;
-with flake.lib;
 {
+  imports = builtins.attrValues (builtins.removeAttrs ezModules [ "default" ]);
+
   options.camms.default.enable = mkOption {
     type = types.bool;
     description = "Default options";
@@ -20,11 +21,11 @@ with flake.lib;
 
   config = {
     camms = mkIf cfg.enable {
-      sh = mkDefault enabled;
-      helix = mkDefault enabled;
-      stylix = mkDefault enabled;
+      sh.enable = mkDefault true;
+      helix.enable = mkDefault true;
+      stylix.enable = mkDefault true;
     };
     home.stateVersion = "24.05";
-    fonts.fontconfig = enabled;
+    fonts.fontconfig.enable = true;
   };
 }

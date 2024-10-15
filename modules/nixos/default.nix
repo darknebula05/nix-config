@@ -1,5 +1,5 @@
 {
-  flake,
+  ezModules,
   lib,
   pkgs,
   inputs,
@@ -10,17 +10,18 @@ let
   cfg = config.camms.default;
 in
 with lib;
-with flake.lib;
 {
-  imports = [ inputs.disko.nixosModules.disko ];
+  imports = [
+    inputs.disko.nixosModules.disko
+  ] ++ builtins.attrValues (builtins.removeAttrs ezModules [ "default" ]);
 
   options.camms.default.enable = mkEnableOption "Default options" // {
     default = true;
   };
 
   config = mkIf cfg.enable {
-    services.automatic-timezoned = enabled;
+    services.automatic-timezoned.enable = true;
 
-    programs.fish = enabled;
+    programs.fish.enable = true;
   };
 }

@@ -3,9 +3,11 @@
 
   inputs = {
     nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
-
-    blueprint.url = "github:numtide/blueprint";
-    blueprint.inputs.nixpkgs.follows = "nixpkgs";
+    flake-parts.url = "github:hercules-ci/flake-parts";
+    flake-parts.inputs.nixpkgs-lib.follows = "nixpkgs";
+    ez-configs.url = "github:ehllie/ez-configs";
+    ez-configs.inputs.flake-parts.follows = "flake-parts";
+    ez-configs.inputs.nixpkgs.follows = "nixpkgs";
 
     nixos-facter-modules.url = "github:numtide/nixos-facter-modules";
 
@@ -38,12 +40,49 @@
 
   outputs =
     inputs:
-    inputs.blueprint {
-      inherit inputs;
+    inputs.flake-parts.lib.mkFlake { inherit inputs; } {
+      imports = [ inputs.ez-configs.flakeModule ];
+
+      debug = true;
+      ezConfigs = {
+        root = ./.;
+        globalArgs = {
+          inherit inputs;
+        };
+        nixos = {
+          configurationsDirectory = ./configs/nixos;
+          modulesDirectory = ./modules/nixos;
+          hosts = {
+            cam-desktop.userHomeModules = [ "cameron" ];
+            cam-laptop.userHomeModules = [ "cameron" ];
+            nixos-wsl.userHomeModules = [ "cshearer" ];
+          };
+        };
+        home = {
+          configurationsDirectory = ./configs/home;
+          modulesDirectory = ./modules/home;
+        };
+      };
+
       systems = [
-        "aarch64-linux"
         "x86_64-linux"
+        "aarch64-linux"
       ];
-      nixpkgs.config.allowUnfree = true;
+
+      perSystem =
+        { system, pkgs, ... }:
+        {
+          _module.args.pkgs = import inputs.nixpkgs {
+            inherit system;
+            overlays = [
+              inputs.poetry2nix.overlays.default
+            ];
+          };
+          packages = {
+            riven = pkgs.callPackage ./packages/riven.nix { };
+            riven-frontend = pkgs.callPackage ./packages/riven-frontend.nix { };
+            zurg = pkgs.callPackage ./packages/zurg.nix { };
+          };
+        };
     };
 }

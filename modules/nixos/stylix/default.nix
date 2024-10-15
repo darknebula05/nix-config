@@ -1,5 +1,4 @@
 {
-  flake,
   lib,
   pkgs,
   inputs,
@@ -11,7 +10,6 @@ let
   theme = "catppuccin-mocha";
 in
 with lib;
-with flake.lib;
 {
   imports = [ inputs.stylix.nixosModules.stylix ];
 
@@ -30,6 +28,6 @@ with flake.lib;
       name = "Adwaita";
       size = 24;
     };
-    targets.gtk = enabled;
+    targets.gtk.enable = true;
   };
 }

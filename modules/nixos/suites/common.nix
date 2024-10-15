@@ -1,5 +1,4 @@
 {
-  flake,
   lib,
   pkgs,
   inputs,
@@ -10,17 +9,16 @@ let
   cfg = config.camms.suites.common;
 in
 with lib;
-with flake.lib;
 {
   options.camms.suites.common.enable = mkEnableOption "desktop suite";
 
   config = mkIf cfg.enable {
     camms = {
-      nix = mkDefault enabled;
-      services.cachix = mkDefault enabled;
-      services.tailscale = mkDefault enabled;
-      sops = mkDefault enabled;
-      user = mkDefault enabled;
+      nix.enable = mkDefault true;
+      services.cachix.enable = mkDefault true;
+      services.tailscale.enable = mkDefault true;
+      sops.enable = mkDefault true;
+      user.enable = mkDefault true;
     };
   };
 }

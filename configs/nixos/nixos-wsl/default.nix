@@ -1,5 +1,4 @@
 {
-  flake,
   lib,
   pkgs,
   inputs,
@@ -7,22 +6,15 @@
   ...
 }:
 with lib;
-with flake.lib;
 {
-  imports = [ flake.nixosModules.all ];
-
   camms = {
     facter = {
       enable = true;
       path = ./facter.json;
     };
-    home = {
-      enable = true;
-      path = ./home.nix;
-    };
-    suites.common = enabled;
-    wsl = enabled;
-    stylix = enabled;
+    suites.common.enable = true;
+    wsl.enable = true;
+    stylix.enable = true;
     variables = {
       username = "cshearer";
       flakeDir = "/home/cshearer/dotfiles/nix";
@@ -32,7 +24,7 @@ with flake.lib;
   system.stateVersion = "24.05";
 
   programs = {
-    nix-ld = enabled;
+    nix-ld.enable = true;
   };
 
   networking.hostName = "nixos-wsl";
@@ -40,7 +32,7 @@ with flake.lib;
   fonts.packages = with pkgs; [ fira-code-nerdfont ];
 
   services = {
-    avahi = enabled;
-    openssh = enabled;
+    avahi.enable = true;
+    openssh.enable = true;
   };
 }

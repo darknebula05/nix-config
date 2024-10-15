@@ -1,5 +1,4 @@
 {
-  flake,
   lib,
   pkgs,
   inputs,
@@ -10,7 +9,6 @@ let
   cfg = config.camms.facter;
 in
 with lib;
-with flake.lib;
 {
   imports = [ inputs.nixos-facter-modules.nixosModules.facter ];
 

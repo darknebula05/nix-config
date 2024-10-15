@@ -1,5 +1,4 @@
 {
-  flake,
   lib,
   pkgs,
   inputs,
@@ -7,20 +6,14 @@
   ...
 }:
 with lib;
-with flake.lib;
 let
   user = "cameron";
 in
 {
-  imports = [
-    # Include the results of the hardware scan.
-    ./hardware-configuration.nix
-    flake.nixosModules.all
-  ];
+  imports = [ ./hardware-configuration.nix ];
 
   camms = {
-    archetypes.workstation = enabled;
-    home.path = ./home.nix;
+    archetypes.workstation.enable = true;
     user.extraGroups = [
       "networkmanager"
       "libvirtd"
@@ -32,15 +25,15 @@ in
   };
 
   boot = {
-    loader.systemd-boot = enabled;
+    loader.systemd-boot.enable = true;
     loader.efi.canTouchEfiVariables = true;
     binfmt.emulatedSystems = [ "aarch64-linux" ];
   };
   nix.settings.extra-platforms = config.boot.binfmt.emulatedSystems;
 
   networking.hostName = "cam-laptop";
-  networking.networkmanager = enabled;
-  networking.iproute2 = enabled;
+  networking.networkmanager.enable = true;
+  networking.iproute2.enable = true;
 
   i18n.inputMethod = {
     enable = true;
@@ -53,18 +46,18 @@ in
 
   time.timeZone = "America/New_York";
   hardware = {
-    bluetooth = enabled;
-    graphics = enabled;
+    bluetooth.enable = true;
+    graphics.enable = true;
   };
 
   programs = {
-    dconf = enabled;
-    nm-applet = enabled;
-    steam = enabled;
-    virt-manager = enabled;
+    dconf.enable = true;
+    nm-applet.enable = true;
+    steam.enable = true;
+    virt-manager.enable = true;
   };
 
-  virtualisation.libvirtd = enabled;
+  virtualisation.libvirtd.enable = true;
 
   environment.systemPackages = with pkgs; [
     adwaita-icon-theme
@@ -86,22 +79,22 @@ in
     fira-code-nerdfont
   ];
 
-  security.rtkit = enabled;
+  security.rtkit.enable = true;
   services = {
-    blueman = enabled;
-    fwupd = enabled;
+    blueman.enable = true;
+    fwupd.enable = true;
     logrotate.checkConfig = false;
-    openssh = enabled;
+    openssh.enable = true;
     pipewire = {
       enable = true;
       alsa = {
         enable = true;
         support32Bit = true;
       };
-      pulse = enabled;
-      jack = enabled;
+      pulse.enable = true;
+      jack.enable = true;
     };
-    printing = enabled;
+    printing.enable = true;
   };
 
   environment.variables = {

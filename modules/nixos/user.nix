@@ -1,5 +1,4 @@
 {
-  flake,
   lib,
   pkgs,
   inputs,
@@ -11,7 +10,6 @@ let
   sops = config.camms.sops.enable;
 in
 with lib;
-with flake.lib;
 {
   options.camms.user = {
     enable = mkEnableOption "user";

@@ -1,5 +1,4 @@
 {
-  flake,
   lib,
   pkgs,
   inputs,
@@ -11,7 +10,6 @@ let
   imp = config.camms.impermanence;
 in
 with lib;
-with flake.lib;
 {
   imports = [ inputs.sops-nix.nixosModules.sops ];
 

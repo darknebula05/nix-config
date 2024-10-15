@@ -1,5 +1,4 @@
 {
-  flake,
   lib,
   pkgs,
   inputs,
@@ -7,15 +6,11 @@
   ...
 }:
 with lib;
-with flake.lib;
 let
   user = "cameron";
 in
 {
-  imports = [
-    ./disko.nix
-    flake.nixosModules.all
-  ];
+  imports = [ ./disko.nix ];
 
   facter.reportPath = ./facter.json;
 
@@ -24,9 +19,8 @@ in
       enable = true;
       path = ./facter.json;
     };
-    home.path = ./home.nix;
-    archetypes.workstation = enabled;
-    services.arrs = enabled;
+    archetypes.workstation.enable = true;
+    services.arrs.enable = true;
     user.extraGroups = [
       "networkmanager"
       "libvirtd"
@@ -40,7 +34,7 @@ in
   };
 
   boot = {
-    loader.systemd-boot = enabled;
+    loader.systemd-boot.enable = true;
     loader.efi.canTouchEfiVariables = true;
     supportedFilesystems = [
       "btrfs"
@@ -58,7 +52,7 @@ in
       enable = true;
       unmanaged = [ "interface-name:ve-*" ];
     };
-    iproute2 = enabled;
+    iproute2.enable = true;
     nat = {
       enable = true;
       internalInterfaces = [ "ve-+" ];
@@ -77,27 +71,27 @@ in
 
   time.timeZone = "America/New_York";
   hardware = {
-    bluetooth = enabled;
-    graphics = enabled;
+    bluetooth.enable = true;
+    graphics.enable = true;
   };
 
   programs = {
-    coolercontrol = enabled;
-    gnome-terminal = enabled;
-    dconf = enabled;
-    nm-applet = enabled;
-    steam = enabled;
-    virt-manager = enabled;
+    coolercontrol.enable = true;
+    gnome-terminal.enable = true;
+    dconf.enable = true;
+    nm-applet.enable = true;
+    steam.enable = true;
+    virt-manager.enable = true;
   };
 
   virtualisation = {
     libvirtd = {
       enable = true;
       qemu = {
-        swtpm = enabled;
+        swtpm.enable = true;
       };
     };
-    containers = enabled;
+    containers.enable = true;
   };
 
   environment.systemPackages = with pkgs; [
@@ -125,24 +119,24 @@ in
     fira-code-nerdfont
   ];
 
-  security.rtkit = enabled;
+  security.rtkit.enable = true;
   services = {
-    avahi = enabled;
-    blueman = enabled;
-    fwupd = enabled;
+    avahi.enable = true;
+    blueman.enable = true;
+    fwupd.enable = true;
     logrotate.checkConfig = false;
-    openssh = enabled;
+    openssh.enable = true;
     pipewire = {
       enable = true;
       alsa = {
         enable = true;
         support32Bit = true;
       };
-      pulse = enabled;
-      jack = enabled;
+      pulse.enable = true;
+      jack.enable = true;
     };
-    printing = enabled;
-    ratbagd = enabled;
+    printing.enable = true;
+    ratbagd.enable = true;
     sunshine = {
       enable = true;
       capSysAdmin = true;

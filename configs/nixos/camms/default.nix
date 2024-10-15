@@ -1,5 +1,4 @@
 {
-  flake,
   lib,
   pkgs,
   inputs,
@@ -8,24 +7,20 @@
   ...
 }:
 with lib;
-with flake.lib;
 {
-  imports = [
-    flake.nixosModules.all
-    ./disko.nix
-  ];
+  imports = [ ./disko.nix ];
 
   facter.reportPath = ./facter.json;
   fileSystems."/nix/persist".neededForBoot = true;
 
   camms = {
-    archetypes.server = enabled;
+    archetypes.server.enable = true;
     facter = {
       enable = true;
       path = ./facter.json;
     };
-    home = enabled;
-    impermanence = enabled;
+    home.enable = true;
+    impermanence.enable = true;
     variables.username = "cameron";
   };
 
@@ -38,7 +33,7 @@ with flake.lib;
     efiSupport = true;
     efiInstallAsRemovable = true;
   };
-  services.openssh = enabled;
+  services.openssh.enable = true;
 
   environment.systemPackages = with pkgs; [
     curl

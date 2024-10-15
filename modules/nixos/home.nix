@@ -1,5 +1,4 @@
 {
-  flake,
   lib,
   pkgs,
   inputs,
@@ -10,7 +9,6 @@ let
   cfg = config.camms.home;
 in
 with lib;
-with flake.lib;
 {
   imports = [ inputs.home-manager.nixosModules.home-manager ];
 

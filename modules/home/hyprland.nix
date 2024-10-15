@@ -1,5 +1,4 @@
 {
-  flake,
   lib,
   pkgs,
   inputs,
@@ -10,7 +9,6 @@ let
   cfg = config.camms.hyprland;
 in
 with lib;
-with flake.lib;
 {
   options.camms.hyprland.enable = mkEnableOption "hyprland";
 
@@ -50,11 +48,11 @@ with flake.lib;
             # col.active_border=0xff6666aa
             # col.inactive_border=0xff000000
 
-            #cursor_inactive_timeout=5
+            #cursor_inactive_timeou.enablet=5
         }
 
         animations {
-            enabled=true
+            true=true
             animation=windows,1,4,default,slide
             animation=border,1,10,default
             animation=fade,1,10,default
@@ -213,7 +211,7 @@ with flake.lib;
       xdg-desktop-portal-hyprland
       zoom-us
     ];
-    services.playerctld = enabled;
+    services.playerctld.enable = true;
     # home.file.".config/hypr/hyprpaper.conf".text = ''
     #   preload = ~/Pictures/wallpapers/black-sand-dunes.jpg
     #   wallpaper = DP-3,~/Pictures/wallpapers/black-sand-dunes.jpg 

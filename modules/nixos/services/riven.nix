@@ -1,20 +1,17 @@
 {
-  flake,
   lib,
   pkgs,
   config,
-  perSystem,
   ...
 }:
 let
   cfg = config.camms.services.riven;
 in
 with lib;
-with flake.lib;
 {
   options.camms.services.riven = {
     enable = mkEnableOption "riven service";
-    package = mkPackageOption perSystem.self "riven" { };
+    package = mkPackageOption pkgs "riven" { };
     dataDir = mkOption {
       type = types.str;
       default = "/var/lib/riven/data";
@@ -47,7 +44,7 @@ with flake.lib;
       enable = mkEnableOption "riven frontend service" // {
         default = true;
       };
-      package = mkPackageOption perSystem.self "riven-frontend" { };
+      package = mkPackageOption pkgs "riven-frontend" { };
       environment = mkOption {
         type = types.anything;
         default = { };

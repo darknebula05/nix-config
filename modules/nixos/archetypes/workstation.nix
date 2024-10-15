@@ -1,5 +1,4 @@
 {
-  flake,
   lib,
   pkgs,
   inputs,
@@ -10,14 +9,13 @@ let
   cfg = config.camms.archetypes.workstation;
 in
 with lib;
-with flake.lib;
 {
   options.camms.archetypes.workstation.enable = mkEnableOption "workstation archetype";
 
   config = mkIf cfg.enable {
     camms.suites = {
-      common = enabled;
-      desktop = enabled;
+      common.enable = true;
+      desktop.enable = true;
     };
   };
 }

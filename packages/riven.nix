@@ -1,13 +1,16 @@
 {
-  pkgs,
-  inputs,
-  pname,
+  fetchFromGitHub,
+  poetry2nix,
+  cmake,
+  stdenvNoCC,
+  makeWrapper,
+  lib,
   ...
 }:
 let
-  poetry2nix = inputs.poetry2nix.lib.mkPoetry2Nix { inherit pkgs; };
+  pname = "riven";
   version = "0.15.3";
-  projectDir = pkgs.fetchFromGitHub {
+  projectDir = fetchFromGitHub {
     owner = "rivenmedia";
     repo = pname;
     rev = "v${version}";
@@ -39,7 +42,7 @@ let
     ) pypkgs-build-requirements)
     // {
       levenshtein = prev.levenshtein.overridePythonAttrs (old: {
-        nativeBuildInputs = [ pkgs.cmake ] ++ old.nativeBuildInputs;
+        nativeBuildInputs = [ cmake ] ++ old.nativeBuildInputs;
         buildInputs = [
           prev.scikit-build
           prev.packaging
@@ -54,13 +57,13 @@ let
     checkGroups = [ ];
   };
 in
-pkgs.stdenvNoCC.mkDerivation (finalAttrs: {
+stdenvNoCC.mkDerivation (finalAttrs: {
   inherit pname version;
   src = projectDir;
 
   nativeBuildInputs = [
     env
-    pkgs.makeWrapper
+    makeWrapper
   ];
 
   installPhase = ''
@@ -78,9 +81,9 @@ pkgs.stdenvNoCC.mkDerivation (finalAttrs: {
   meta = {
     description = "The frontend for riven";
     homepage = "https://github.com/rivenmedia/riven-frontend";
-    license = pkgs.lib.licenses.gpl3Plus;
-    maintainers = with pkgs.lib.maintainers; [ camms205 ];
-    platforms = pkgs.lib.platforms.linux;
+    license = lib.licenses.gpl3Plus;
+    maintainers = with lib.maintainers; [ camms205 ];
+    platforms = lib.platforms.linux;
     mainProgram = "riven";
   };
 })

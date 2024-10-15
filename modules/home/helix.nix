@@ -1,5 +1,4 @@
 {
-  flake,
   lib,
   pkgs,
   inputs,
@@ -11,7 +10,6 @@ let
   cfg = config.camms.helix;
 in
 with lib;
-with flake.lib;
 {
   options.camms.helix.enable = mkEnableOption "helix";
 
@@ -23,7 +21,7 @@ with flake.lib;
       editor = {
         line-number = "relative";
         bufferline = "always";
-        soft-wrap = enabled;
+        soft-wrap.enable = true;
         lsp.display-inlay-hints = true;
         cursor-shape.insert = "bar";
       };

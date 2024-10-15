@@ -1,5 +1,4 @@
 {
-  flake,
   lib,
   pkgs,
   inputs,
@@ -10,7 +9,6 @@ let
   cfg = config.camms.programs;
 in
 with lib;
-with flake.lib;
 {
   options.camms.programs.enable = mkEnableOption "programs";
 
@@ -28,14 +26,14 @@ with flake.lib;
     ];
 
     programs = {
-      kitty = enabled;
-      zathura = enabled;
+      kitty.enable = true;
+      zathura.enable = true;
     };
 
     services = {
-      dunst = enabled;
-      easyeffects = enabled;
-      syncthing = enabled;
+      dunst.enable = true;
+      easyeffects.enable = true;
+      syncthing.enable = true;
     };
   };
 }

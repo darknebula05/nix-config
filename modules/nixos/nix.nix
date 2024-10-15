@@ -1,5 +1,4 @@
 {
-  flake,
   lib,
   pkgs,
   inputs,
@@ -10,7 +9,6 @@ let
   cfg = config.camms.nix;
 in
 with lib;
-with flake.lib;
 {
   options.camms.nix.enable = mkEnableOption "nix settings";
 
@@ -41,7 +39,10 @@ with flake.lib;
       nixPath = [ "nixpkgs=${inputs.nixpkgs}" ];
     };
 
-    nixpkgs.config.allowUnfree = true;
+    nixpkgs = {
+      config.allowUnfree = true;
+      overlays = builtins.attrValues inputs.self.overlays;
+    };
 
     programs.nh = {
       enable = true;

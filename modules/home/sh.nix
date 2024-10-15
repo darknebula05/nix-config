@@ -1,5 +1,4 @@
 {
-  flake,
   lib,
   pkgs,
   inputs,
@@ -10,14 +9,13 @@ let
   cfg = config.camms.sh;
 in
 with lib;
-with flake.lib;
 {
   imports = [ inputs.nix-index-database.hmModules.nix-index ];
 
   options.camms.sh.enable = mkEnableOption "sh";
 
   config = mkIf cfg.enable {
-    camms.lf = enabled;
+    camms.lf.enable = true;
 
     home.packages = with pkgs; [
       cachix
@@ -48,7 +46,7 @@ with flake.lib;
       };
       direnv = {
         enable = true;
-        nix-direnv = enabled;
+        nix-direnv.enable = true;
       };
       fish = {
         enable = true;
@@ -65,23 +63,23 @@ with flake.lib;
           za = "zellij a -c";
         };
       };
-      fzf = enabled;
+      fzf.enable = true;
       git = {
         enable = true;
-        delta = enabled;
+        delta.enable = true;
         userName = "darknebula05";
         userEmail = "camms205@aol.com";
         extraConfig = {
           init.defaultBranch = "main";
         };
       };
-      lazygit = enabled;
+      lazygit.enable = true;
       man.generateCaches = true;
-      nix-index = enabled;
-      nix-index-database.comma = enabled;
-      pandoc = enabled;
-      ripgrep = enabled;
-      starship = enabled;
+      nix-index.enable = true;
+      nix-index-database.comma.enable = true;
+      pandoc.enable = true;
+      ripgrep.enable = true;
+      starship.enable = true;
       yazi = {
         enable = true;
         enableFishIntegration = true;
@@ -92,7 +90,7 @@ with flake.lib;
           pane_frames = false;
         };
       };
-      zoxide = enabled;
+      zoxide.enable = true;
     };
   };
 }

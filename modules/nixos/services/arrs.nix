@@ -1,9 +1,8 @@
 {
-  flake,
   lib,
   pkgs,
   config,
-  perSystem,
+  inputs,
   ...
 }:
 let
@@ -15,7 +14,6 @@ let
   gid = builtins.toString config.users.groups.${group}.gid;
 in
 with lib;
-with flake.lib;
 {
   options.camms.services.arrs = {
     enable = mkEnableOption "arrs stack";
@@ -99,7 +97,7 @@ with flake.lib;
         enable = true;
         inherit user group;
       };
-      jellyseerr = enabled;
+      jellyseerr.enable = true;
     };
 
     systemd = {
@@ -138,9 +136,7 @@ with flake.lib;
               Type = "simple";
               User = user;
               Group = group;
-              ExecStart = "${perSystem.self.zurg}/bin/zurg -c ${
-                config.sops.secrets."media/zurg-config.yml".path
-              }";
+              ExecStart = "${pkgs.zurg}/bin/zurg -c ${config.sops.secrets."media/zurg-config.yml".path}";
               WorkingDirectory = "/var/lib/zurg";
               Restart = "on-failure";
             };

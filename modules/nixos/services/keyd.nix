@@ -1,5 +1,4 @@
 {
-  flake,
   lib,
   pkgs,
   inputs,
@@ -10,7 +9,6 @@ let
   cfg = config.camms.services.keyd;
 in
 with lib;
-with flake.lib;
 {
   options.camms.services.keyd.enable = mkEnableOption "keyd";
 
