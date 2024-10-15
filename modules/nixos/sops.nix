@@ -21,10 +21,7 @@ with lib;
         let
           prefix = (if imp.enable then imp.path else "");
         in
-        [
-          "${prefix}/etc/ssh/ssh_host_ed25519_key"
-          "${prefix}/etc/ssh/ssh_host_rsa_key"
-        ];
+        [ "${prefix}/etc/ssh/ssh_host_ed25519_key" ];
     };
     defaultSopsFile = mkOption {
       type = types.path;

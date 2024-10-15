@@ -60,7 +60,7 @@ with lib;
         file = {
           owner = config.users.users.${user}.name;
           group = config.users.users.${user}.group;
-          sopsFile = "${flake}/secrets/arrs.yaml";
+          sopsFile = "${inputs.self}/secrets/arrs.yaml";
         };
       in
       mkIf config.camms.sops.enable {
