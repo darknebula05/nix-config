@@ -12,6 +12,7 @@ with lib;
       enable = true;
       path = ./facter.json;
     };
+    home.enable = true;
     suites.common.enable = true;
     wsl.enable = true;
     stylix.enable = true;
