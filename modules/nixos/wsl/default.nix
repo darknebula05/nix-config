@@ -1,23 +1,24 @@
 {
   lib,
   pkgs,
+  namespace,
   inputs,
   config,
   ...
 }:
 let
-  cfg = config.camms.wsl;
+  cfg = config.${namespace}.wsl;
 in
 with lib;
-with lib.camms;
+with lib.${namespace};
 {
   imports = [ inputs.nixos-wsl.nixosModules.default ];
 
-  options.camms.wsl.enable = mkEnableOption "wsl";
+  options.${namespace}.wsl.enable = mkEnableOption "wsl";
 
   config.wsl = mkIf cfg.enable {
     enable = true;
-    defaultUser = config.camms.variables.username;
+    defaultUser = config.${namespace}.variables.username;
     useWindowsDriver = true;
   };
 }

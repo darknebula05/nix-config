@@ -1,20 +1,21 @@
 {
   lib,
   pkgs,
+  namespace,
   ...
 }:
 with lib;
-with lib.camms;
+with lib.${namespace};
 {
-  camms = {
+  ${namespace} = {
     facter = {
       enable = true;
       path = ./facter.json;
     };
-    home = {
-      enable = true;
-      path = ./home.nix;
-    };
+    # home = {
+    #   enable = true;
+    #   path = ./home.nix;
+    # };
     suites.common = enabled;
     wsl = enabled;
     stylix = enabled;

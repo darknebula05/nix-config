@@ -1,11 +1,12 @@
 {
   lib,
   pkgs,
+  namespace,
   config,
   ...
 }:
 with lib;
-with lib.camms;
+with lib.${namespace};
 let
   user = "cameron";
 in
@@ -14,7 +15,7 @@ in
     ./hardware-configuration.nix
   ];
 
-  camms = {
+  ${namespace} = {
     archetypes.workstation = enabled;
     home.path = ./home.nix;
     user.extraGroups = [

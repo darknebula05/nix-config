@@ -1,17 +1,18 @@
 {
   lib,
   pkgs,
+  namespace,
   inputs,
   config,
   ...
 }:
 let
-  cfg = config.camms.services.cachix;
+  cfg = config.${namespace}.services.cachix;
 in
 with lib;
-with lib.camms;
+with lib.${namespace};
 {
-  options.camms.services.cachix.enable = mkEnableOption "cachix";
+  options.${namespace}.services.cachix.enable = mkEnableOption "cachix";
 
   config = {
     services.cachix-agent.enable = mkIf cfg.enable true;

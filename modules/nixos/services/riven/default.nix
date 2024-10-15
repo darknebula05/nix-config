@@ -1,19 +1,20 @@
 {
   lib,
   pkgs,
+  namespace,
   config,
   ...
 }:
 let
-  cfg = config.camms.services.riven;
+  cfg = config.${namespace}.services.riven;
 in
 with lib;
-with lib.camms;
+with lib.${namespace};
 {
-  options.camms.services.riven = {
+  options.${namespace}.services.riven = {
     enable = mkEnableOption "riven service";
     package = mkPackageOption pkgs [
-      "camms"
+      "${namespace}"
       "riven"
     ] { };
     dataDir = mkOption {
@@ -49,7 +50,7 @@ with lib.camms;
         default = true;
       };
       package = mkPackageOption pkgs [
-        "camms"
+        "${namespace}"
         "riven-frontend"
       ] { };
       environment = mkOption {

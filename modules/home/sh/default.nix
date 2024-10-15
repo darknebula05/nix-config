@@ -1,22 +1,23 @@
 {
   lib,
   pkgs,
+  namespace,
   inputs,
   config,
   ...
 }:
 let
-  cfg = config.camms.sh;
+  cfg = config.${namespace}.sh;
 in
 with lib;
-with lib.camms;
+with lib.${namespace};
 {
   imports = [ inputs.nix-index-database.hmModules.nix-index ];
 
-  options.camms.sh.enable = mkEnableOption "sh";
+  options.${namespace}.sh.enable = mkEnableOption "sh";
 
   config = mkIf cfg.enable {
-    camms.lf = enabled;
+    ${namespace}.lf = enabled;
 
     home.packages = with pkgs; [
       cachix

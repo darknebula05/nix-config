@@ -1,12 +1,13 @@
 {
   lib,
   pkgs,
+  namespace,
   ...
 }:
 with lib;
-with lib.camms;
+with lib.${namespace};
 {
-  camms = {
+  ${namespace} = {
     browser = enabled;
     hyprland = enabled;
     programs = enabled;

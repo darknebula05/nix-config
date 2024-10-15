@@ -1,17 +1,18 @@
 {
   lib,
   pkgs,
+  namespace,
   inputs,
   config,
   ...
 }:
 let
-  cfg = config.camms.variables;
+  cfg = config.${namespace}.variables;
 in
 with lib;
-with lib.camms;
+with lib.${namespace};
 {
-  options.camms.variables = {
+  options.${namespace}.variables = {
     username = mkOption {
       type = types.str;
     };

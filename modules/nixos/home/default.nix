@@ -1,19 +1,20 @@
 {
   lib,
   pkgs,
+  namespace,
   inputs,
   config,
   ...
 }:
 let
-  cfg = config.camms.home;
+  cfg = config.${namespace}.home;
 in
 with lib;
-with lib.camms;
+with lib.${namespace};
 {
   imports = [ inputs.home-manager.nixosModules.home-manager ];
 
-  options.camms.home = {
+  options.${namespace}.home = {
     enable = mkEnableOption "home";
     path = mkOption {
       type = types.nullOr types.path;
@@ -21,7 +22,7 @@ with lib.camms;
     };
     name = mkOption {
       type = types.str;
-      default = config.camms.variables.username;
+      default = config.${namespace}.variables.username;
     };
   };
 

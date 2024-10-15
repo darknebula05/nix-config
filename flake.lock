@@ -455,17 +455,18 @@
         ]
       },
       "locked": {
-        "lastModified": 1719005984,
-        "narHash": "sha256-mpFl3Jv4fKnn+5znYXG6SsBjfXHJdRG5FEqNSPx0GLA=",
-        "owner": "snowfallorg",
-        "repo": "lib",
-        "rev": "c6238c83de101729c5de3a29586ba166a9a65622",
-        "type": "github"
+        "lastModified": 1728996448,
+        "narHash": "sha256-M2pHEW0hjWXhDlr/74YT3Wzip5uvD5Bwsfdhe3U+4Gs=",
+        "ref": "refs/heads/home-args",
+        "rev": "e553436635f11fb7eafdc44aea2e1fe973940d7b",
+        "shallow": true,
+        "type": "git",
+        "url": "file:/home/cshearer/dev/nix/snowfall-lib"
       },
       "original": {
-        "owner": "snowfallorg",
-        "repo": "lib",
-        "type": "github"
+        "shallow": true,
+        "type": "git",
+        "url": "file:/home/cshearer/dev/nix/snowfall-lib"
       }
     },
     "sops-nix": {

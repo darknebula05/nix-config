@@ -1,18 +1,19 @@
 {
   lib,
   pkgs,
+  namespace,
   inputs,
   config,
   ...
 }:
 let
-  cfg = config.camms.user;
-  sops = config.camms.sops.enable;
+  cfg = config.${namespace}.user;
+  sops = config.${namespace}.sops.enable;
 in
 with lib;
-with lib.camms;
+with lib.${namespace};
 {
-  options.camms.user = {
+  options.${namespace}.user = {
     enable = mkEnableOption "user";
     admin = mkOption {
       type = types.bool;
@@ -35,7 +36,7 @@ with lib.camms;
     users = {
       mutableUsers = false;
       inherit (cfg) defaultUserShell;
-      users.${config.camms.variables.username} = {
+      users.${config.${namespace}.variables.username} = {
         isNormalUser = true;
         uid = 1000;
         extraGroups = optional (cfg.admin) "wheel" ++ cfg.extraGroups;
@@ -49,7 +50,9 @@ with lib.camms;
         ];
       };
     };
-    camms.user.hashedPasswordFile = mkIf sops (mkDefault config.sops.secrets.hashed_password.path);
+    ${namespace}.user.hashedPasswordFile = mkIf sops (
+      mkDefault config.sops.secrets.hashed_password.path
+    );
     sops.secrets.hashed_password.neededForUsers = mkIf sops true;
   };
 }

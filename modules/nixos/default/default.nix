@@ -1,19 +1,20 @@
 {
   lib,
   pkgs,
+  namespace,
   inputs,
   config,
   ...
 }:
 let
-  cfg = config.camms.default;
+  cfg = config.${namespace}.default;
 in
 with lib;
-with lib.camms;
+with lib.${namespace};
 {
   imports = [ inputs.disko.nixosModules.disko ];
 
-  options.camms.default.enable = mkEnableOption "Default options" // {
+  options.${namespace}.default.enable = mkEnableOption "Default options" // {
     default = true;
   };
 

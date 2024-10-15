@@ -1,20 +1,21 @@
 {
   lib,
   pkgs,
+  namespace,
   inputs,
   config,
   ...
 }:
 let
-  cfg = config.camms.sops;
-  imp = config.camms.impermanence;
+  cfg = config.${namespace}.sops;
+  imp = config.${namespace}.impermanence;
 in
 with lib;
-with lib.camms;
+with lib.${namespace};
 {
   imports = [ inputs.sops-nix.nixosModules.sops ];
 
-  options.camms.sops = {
+  options.${namespace}.sops = {
     enable = mkEnableOption "sops";
     sshKeyPaths = mkOption {
       type = with types; listOf str;

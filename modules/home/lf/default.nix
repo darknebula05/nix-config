@@ -1,17 +1,18 @@
 {
   lib,
   pkgs,
+  namespace,
   inputs,
   config,
   ...
 }:
 let
-  cfg = config.camms.lf;
+  cfg = config.${namespace}.lf;
 in
 with lib;
-with lib.camms;
+with lib.${namespace};
 {
-  options.camms.lf.enable = mkEnableOption "lf";
+  options.${namespace}.lf.enable = mkEnableOption "lf";
 
   config.programs = mkIf cfg.enable {
     fish = {

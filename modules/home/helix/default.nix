@@ -1,18 +1,19 @@
 {
   lib,
   pkgs,
+  namespace,
   inputs,
   config,
   osConfig ? { },
   ...
 }:
 let
-  cfg = config.camms.helix;
+  cfg = config.${namespace}.helix;
 in
 with lib;
-with lib.camms;
+with lib.${namespace};
 {
-  options.camms.helix.enable = mkEnableOption "helix";
+  options.${namespace}.helix.enable = mkEnableOption "helix";
 
   config.programs.helix = mkIf cfg.enable {
     enable = true;
@@ -69,7 +70,7 @@ with lib.camms;
           command = "${pkgs.nixd}/bin/nixd";
           config.nixd.options =
             let
-              flake = osConfig.camms.variables.flakeDir or "${config.user.home.directory}/.config/nix";
+              flake = osConfig.${namespace}.variables.flakeDir or "${config.user.home.directory}/.config/nix";
             in
             {
               nixos.expr = ''(builtins.getFlake "${flake}").nixosConfigurations.cam-desktop.options'';

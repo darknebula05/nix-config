@@ -5,7 +5,8 @@
     nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
 
     snowfall-lib = {
-      url = "github:snowfallorg/lib";
+      url = "git+file:/home/cshearer/dev/nix/snowfall-lib?shallow=1";
+      # url = "github:snowfallorg/lib";
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
@@ -52,6 +53,18 @@
         inputs.poetry2nix.overlays.default
       ];
 
-      alias.packages.default = "deploy";
+      # causes inf rec if placed in a package file
+      outputs-builder =
+        channels:
+        let
+          spec = {
+            agents = builtins.mapAttrs (
+              _: cfg: cfg.config.system.build.toplevel
+            ) inputs.self.nixosConfigurations or { };
+          };
+        in
+        {
+          packages.default = channels.nixpkgs.writeText "deploy.json" (builtins.toJSON spec);
+        };
     };
 }

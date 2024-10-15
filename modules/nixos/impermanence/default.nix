@@ -1,19 +1,20 @@
 {
   lib,
   pkgs,
+  namespace,
   inputs,
   config,
   ...
 }:
 let
-  cfg = config.camms.impermanence;
+  cfg = config.${namespace}.impermanence;
 in
 with lib;
-with lib.camms;
+with lib.${namespace};
 {
   imports = [ inputs.impermanence.nixosModules.impermanence ];
 
-  options.camms.impermanence = {
+  options.${namespace}.impermanence = {
     enable = mkEnableOption "impermanence";
     path = mkOption {
       type = types.str;

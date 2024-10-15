@@ -1,21 +1,21 @@
 {
   lib,
   pkgs,
+  namespace,
   inputs,
   config,
   ...
 }:
 let
-  cfg = config.camms.suites.common;
+  cfg = config.${namespace}.suites.common;
 in
 with lib;
-with lib.camms;
+with lib.${namespace};
 {
-  options.camms.suites.common.enable = mkEnableOption "desktop suite";
+  options.${namespace}.suites.common.enable = mkEnableOption "desktop suite";
 
   config = mkIf cfg.enable {
-    camms = {
-      stylix.enable = mkForce false;
+    ${namespace} = {
       nix = mkDefault enabled;
       services.cachix = mkDefault enabled;
       services.tailscale = mkDefault enabled;

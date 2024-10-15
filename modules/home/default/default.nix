@@ -1,24 +1,25 @@
 {
   lib,
   pkgs,
+  namespace,
   inputs,
   config,
   ...
 }:
 let
-  cfg = config.camms.default;
+  cfg = config.${namespace}.default;
 in
 with lib;
-with lib.camms;
+with lib.${namespace};
 {
-  options.camms.default.enable = mkOption {
+  options.${namespace}.default.enable = mkOption {
     type = types.bool;
     description = "Default options";
     default = true;
   };
 
   config = {
-    camms = mkIf cfg.enable {
+    ${namespace} = mkIf cfg.enable {
       sh = mkDefault enabled;
       helix = mkDefault enabled;
       stylix = mkDefault enabled;

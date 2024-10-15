@@ -1,17 +1,18 @@
 {
   lib,
   pkgs,
+  namespace,
   inputs,
   config,
   ...
 }:
 let
-  cfg = config.camms.services.keyd;
+  cfg = config.${namespace}.services.keyd;
 in
 with lib;
-with lib.camms;
+with lib.${namespace};
 {
-  options.camms.services.keyd.enable = mkEnableOption "keyd";
+  options.${namespace}.services.keyd.enable = mkEnableOption "keyd";
 
   config.services.keyd = mkIf cfg.enable {
     enable = true;

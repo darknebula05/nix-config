@@ -1,17 +1,18 @@
 {
   lib,
   pkgs,
+  namespace,
   inputs,
   config,
   ...
 }:
 let
-  cfg = config.camms.hyprland;
+  cfg = config.${namespace}.hyprland;
 in
 with lib;
-with lib.camms;
+with lib.${namespace};
 {
-  options.camms.hyprland.enable = mkEnableOption "hyprland";
+  options.${namespace}.hyprland.enable = mkEnableOption "hyprland";
 
   config = mkIf cfg.enable {
     wayland.windowManager.hyprland = {
@@ -220,10 +221,10 @@ with lib.camms;
     #   wallpaper = eDP-1,/home/cameron/Pictures/wallpapers/death_star.jpg
     # '';
     programs = {
-      eww = mkIf (config.camms.variables.ewwDir != null) {
+      eww = mkIf (config.${namespace}.variables.ewwDir != null) {
         enable = true;
         package = pkgs.eww;
-        configDir = config.camms.variables.ewwDir;
+        configDir = config.${namespace}.variables.ewwDir;
       };
       fuzzel = {
         enable = true;

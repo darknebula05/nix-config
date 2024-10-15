@@ -1,20 +1,21 @@
 {
   lib,
   pkgs,
+  namespace,
   inputs,
   config,
   ...
 }:
 let
-  cfg = config.camms.archetypes.server;
+  cfg = config.${namespace}.archetypes.server;
 in
 with lib;
-with lib.camms;
+with lib.${namespace};
 {
-  options.camms.archetypes.server.enable = mkEnableOption "server archetype";
+  options.${namespace}.archetypes.server.enable = mkEnableOption "server archetype";
 
   config = mkIf cfg.enable {
-    camms.suites = {
+    ${namespace}.suites = {
       common = enabled;
     };
   };

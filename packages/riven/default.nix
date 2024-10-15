@@ -1,5 +1,4 @@
 {
-  lib,
   fetchFromGitHub,
   poetry2nix,
   stdenvNoCC,
@@ -77,13 +76,4 @@ stdenvNoCC.mkDerivation (finalAttrs: {
 
     runHook postInstall
   '';
-
-  meta = {
-    description = "The frontend for riven";
-    homepage = "https://github.com/rivenmedia/riven-frontend";
-    license = lib.licenses.gpl3Plus;
-    maintainers = with lib.maintainers; [ camms205 ];
-    platforms = lib.platforms.linux;
-    mainProgram = "riven";
-  };
 })

@@ -1,17 +1,18 @@
 {
   lib,
   pkgs,
+  namespace,
   inputs,
   config,
   ...
 }:
 let
-  cfg = config.camms.services.tailscale;
+  cfg = config.${namespace}.services.tailscale;
 in
 with lib;
-with lib.camms;
+with lib.${namespace};
 {
-  options.camms.services.tailscale.enable = mkEnableOption "tailscale";
+  options.${namespace}.services.tailscale.enable = mkEnableOption "tailscale";
 
   config = mkIf cfg.enable {
     services.tailscale = {

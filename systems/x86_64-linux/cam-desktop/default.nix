@@ -1,11 +1,12 @@
 {
   lib,
   pkgs,
+  namespace,
   config,
   ...
 }:
 with lib;
-with lib.camms;
+with lib.${namespace};
 let
   user = "cameron";
 in
@@ -16,7 +17,7 @@ in
 
   facter.reportPath = ./facter.json;
 
-  camms = {
+  ${namespace} = {
     facter = {
       enable = true;
       path = ./facter.json;

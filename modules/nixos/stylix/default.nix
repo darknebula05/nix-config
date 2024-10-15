@@ -1,20 +1,21 @@
 {
   lib,
   pkgs,
+  namespace,
   inputs,
   config,
   ...
 }:
 let
-  cfg = config.camms.stylix;
+  cfg = config.${namespace}.stylix;
   theme = "catppuccin-mocha";
 in
 with lib;
-with lib.camms;
+with lib.${namespace};
 {
   imports = [ inputs.stylix.nixosModules.stylix ];
 
-  options.camms.stylix.enable = mkEnableOption "stylix";
+  options.${namespace}.stylix.enable = mkEnableOption "stylix";
 
   config.stylix = mkIf cfg.enable {
     enable = true;

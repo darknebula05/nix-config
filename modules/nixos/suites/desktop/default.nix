@@ -1,20 +1,21 @@
 {
   lib,
   pkgs,
+  namespace,
   inputs,
   config,
   ...
 }:
 let
-  cfg = config.camms.suites.desktop;
+  cfg = config.${namespace}.suites.desktop;
 in
 with lib;
-with lib.camms;
+with lib.${namespace};
 {
-  options.camms.suites.desktop.enable = mkEnableOption "desktop suite";
+  options.${namespace}.suites.desktop.enable = mkEnableOption "desktop suite";
 
   config = mkIf cfg.enable {
-    camms = {
+    ${namespace} = {
       home = mkDefault enabled;
       impermanence = mkDefault enabled;
       services.keyd = mkDefault enabled;

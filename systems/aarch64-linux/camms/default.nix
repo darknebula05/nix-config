@@ -1,11 +1,12 @@
 {
   lib,
   pkgs,
+  namespace,
   config,
   ...
 }:
 with lib;
-with lib.camms;
+with lib.${namespace};
 {
   imports = [
     ./disko.nix
@@ -14,7 +15,7 @@ with lib.camms;
   facter.reportPath = ./facter.json;
   fileSystems."/nix/persist".neededForBoot = true;
 
-  camms = {
+  ${namespace} = {
     archetypes.server = enabled;
     facter = {
       enable = true;
@@ -26,7 +27,7 @@ with lib.camms;
   };
 
   networking = {
-    hostName = "camms";
+    hostName = "${namespace}";
     hostId = "707378ff";
   };
 

@@ -1,17 +1,18 @@
 {
   lib,
   pkgs,
+  namespace,
   inputs,
   config,
   ...
 }:
 let
-  cfg = config.camms.nix;
+  cfg = config.${namespace}.nix;
 in
 with lib;
-with lib.camms;
+with lib.${namespace};
 {
-  options.camms.nix.enable = mkEnableOption "nix settings";
+  options.${namespace}.nix.enable = mkEnableOption "nix settings";
 
   config = mkIf cfg.enable {
     nix = {
@@ -48,7 +49,7 @@ with lib.camms;
         enable = true;
         extraArgs = "--keep-since 4d --keep 3 --nogcroots";
       };
-      flake = config.camms.variables.flakeDir;
+      flake = config.${namespace}.variables.flakeDir;
     };
   };
 }

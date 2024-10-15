@@ -1,12 +1,13 @@
 {
   lib,
+  namespace,
   config,
   ...
 }:
 with lib;
-with lib.camms;
+with lib.${namespace};
 {
-  options.camms.variables = {
+  options.${namespace}.variables = {
     ewwDir = mkOption {
       type = types.nullOr types.path;
       default = null;

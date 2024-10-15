@@ -1,6 +1,4 @@
 {
-  lib,
-  pkgs,
   stdenv,
   fetchFromGitHub,
   pnpm,
@@ -59,13 +57,4 @@ stdenv.mkDerivation (finalAttrs: {
 
     runHook postInstall
   '';
-
-  meta = {
-    description = "The frontend for riven";
-    homepage = "https://github.com/rivenmedia/riven-frontend";
-    license = lib.licenses.gpl3Plus;
-    maintainers = with lib.maintainers; [ camms205 ];
-    platforms = lib.platforms.linux;
-    mainProgram = "riven-frontend";
-  };
 })

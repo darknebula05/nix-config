@@ -1,17 +1,18 @@
 {
   lib,
   pkgs,
+  namespace,
   inputs,
   config,
   ...
 }:
 let
-  cfg = config.camms.programs;
+  cfg = config.${namespace}.programs;
 in
 with lib;
-with lib.camms;
+with lib.${namespace};
 {
-  options.camms.programs.enable = mkEnableOption "programs";
+  options.${namespace}.programs.enable = mkEnableOption "programs";
 
   config = mkIf cfg.enable {
     home.packages = with pkgs; [

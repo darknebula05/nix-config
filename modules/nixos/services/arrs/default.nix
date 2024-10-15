@@ -1,11 +1,12 @@
 {
   lib,
   pkgs,
+  namespace,
   config,
   ...
 }:
 let
-  cfg = config.camms.services.arrs;
+  cfg = config.${namespace}.services.arrs;
   path = "${cfg.statePath}";
   user = "media";
   group = "media";
@@ -13,9 +14,9 @@ let
   gid = builtins.toString config.users.groups.${group}.gid;
 in
 with lib;
-with lib.camms;
+with lib.${namespace};
 {
-  options.camms.services.arrs = {
+  options.${namespace}.services.arrs = {
     enable = mkEnableOption "arrs stack";
     statePath = mkOption {
       type = types.str;
@@ -25,7 +26,7 @@ with lib.camms;
   };
 
   config = mkIf cfg.enable {
-    camms.services.riven = {
+    ${namespace}.services.riven = {
       enable = true;
       inherit user group;
       envFile = config.sops.secrets."media/riven.env".path;
@@ -52,7 +53,7 @@ with lib.camms;
     };
     users.groups.${group} = {
       gid = 10000;
-      members = [ config.camms.variables.username ];
+      members = [ config.${namespace}.variables.username ];
     };
 
     sops.secrets =
@@ -63,7 +64,7 @@ with lib.camms;
           sopsFile = snowfall.fs.get-file "secrets/arrs.yaml";
         };
       in
-      mkIf config.camms.sops.enable {
+      mkIf config.${namespace}.sops.enable {
         "media/riven.env" = file;
         "media/zurg-config.yml" = file;
       };
@@ -136,7 +137,9 @@ with lib.camms;
               Type = "simple";
               User = user;
               Group = group;
-              ExecStart = "${pkgs.zurg}/bin/zurg -c ${config.sops.secrets."media/zurg-config.yml".path}";
+              ExecStart = "${pkgs.${namespace}.zurg}/bin/zurg -c ${
+                config.sops.secrets."media/zurg-config.yml".path
+              }";
               WorkingDirectory = "/var/lib/zurg";
               Restart = "on-failure";
             };
@@ -168,14 +171,16 @@ with lib.camms;
       ];
     };
 
-    environment.persistence.${config.camms.impermanence.path} = mkIf config.camms.impermanence.enable {
-      directories = [
-        "/var/cache/jellyfin"
-        "/var/lib/jellyfin"
-        "/var/lib/private/jellyseerr"
-        "/var/lib/riven"
-        "/var/lib/zurg"
-      ];
-    };
+    environment.persistence.${config.${namespace}.impermanence.path} =
+      mkIf config.${namespace}.impermanence.enable
+        {
+          directories = [
+            "/var/cache/jellyfin"
+            "/var/lib/jellyfin"
+            "/var/lib/private/jellyseerr"
+            "/var/lib/riven"
+            "/var/lib/zurg"
+          ];
+        };
   };
 }

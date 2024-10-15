@@ -1,17 +1,18 @@
 {
   lib,
   pkgs,
+  namespace,
   inputs,
   config,
   ...
 }:
 let
-  cfg = config.camms.browser;
+  cfg = config.${namespace}.browser;
 in
 with lib;
-with lib.camms;
+with lib.${namespace};
 {
-  options.camms.browser.enable = mkEnableOption "browsers";
+  options.${namespace}.browser.enable = mkEnableOption "browsers";
 
   config.programs = mkIf cfg.enable {
     chromium = {

@@ -1,5 +1,4 @@
 {
-  lib,
   stdenv,
   fetchzip,
   autoPatchelfHook,
@@ -23,11 +22,4 @@ stdenv.mkDerivation rec {
     install -m755 -D zurg $out/bin/zurg
     runHook postInstall
   '';
-
-  meta = {
-    homepage = "https://github.com/debridmediamanager/zurg-testing";
-    maintainers = with lib.maintainers; [ camms205 ];
-    platforms = lib.platforms.linux;
-    mainProgram = "zurg";
-  };
 }

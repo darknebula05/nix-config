@@ -1,17 +1,18 @@
 {
   lib,
   pkgs,
+  namespace,
   inputs,
   config,
   ...
 }:
 let
-  cfg = config.camms.stylix;
+  cfg = config.${namespace}.stylix;
 in
 with lib;
-with lib.camms;
+with lib.${namespace};
 {
-  options.camms.stylix.enable = mkEnableOption "stylix";
+  options.${namespace}.stylix.enable = mkEnableOption "stylix";
 
   config = mkIf cfg.enable {
     gtk = {

@@ -1,20 +1,21 @@
 {
   lib,
   pkgs,
+  namespace,
   inputs,
   config,
   ...
 }:
 let
-  cfg = config.camms.archetypes.workstation;
+  cfg = config.${namespace}.archetypes.workstation;
 in
 with lib;
-with lib.camms;
+with lib.${namespace};
 {
-  options.camms.archetypes.workstation.enable = mkEnableOption "workstation archetype";
+  options.${namespace}.archetypes.workstation.enable = mkEnableOption "workstation archetype";
 
   config = mkIf cfg.enable {
-    camms.suites = {
+    ${namespace}.suites = {
       common = enabled;
       desktop = enabled;
     };
