@@ -20,6 +20,7 @@ in
     ];
     variables = {
       username = "${user}";
+      ewwDir = ./eww;
       flakeDir = "/home/cameron/dotfiles/nix";
     };
   };

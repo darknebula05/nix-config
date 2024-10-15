@@ -9,6 +9,5 @@ with lib;
     browser.enable = true;
     hyprland.enable = true;
     programs.enable = true;
-    variables.ewwDir = ./eww;
   };
 }

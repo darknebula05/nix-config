@@ -1,7 +1,5 @@
 {
   lib,
-  pkgs,
-  inputs,
   config,
   ...
 }:
@@ -17,6 +15,10 @@ with lib;
     flakeDir = mkOption {
       type = types.str;
       default = "/home/${cfg.username}/.config/nixos/";
+    };
+    ewwDir = mkOption {
+      type = types.nullOr types.path;
+      default = null;
     };
   };
 }

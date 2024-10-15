@@ -3,6 +3,7 @@
   pkgs,
   inputs,
   config,
+  osConfig,
   ...
 }:
 let
@@ -219,10 +220,10 @@ with lib;
     #   wallpaper = eDP-1,/home/cameron/Pictures/wallpapers/death_star.jpg
     # '';
     programs = {
-      eww = mkIf (config.camms.variables.ewwDir != null) {
+      eww = mkIf (osConfig.camms.variables.ewwDir or null != null) {
         enable = true;
         package = pkgs.eww;
-        configDir = config.camms.variables.ewwDir;
+        configDir = osConfig.camms.variables.ewwDir;
       };
       fuzzel = {
         enable = true;

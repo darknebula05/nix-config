@@ -41,7 +41,11 @@ with lib;
 
     nixpkgs = {
       config.allowUnfree = true;
-      overlays = builtins.attrValues inputs.self.overlays;
+      overlays = [
+        (final: prev: {
+          inherit (inputs.self.packages.${prev.stdenv.hostPlatform.system}) riven riven-frontend zurg;
+        })
+      ];
     };
 
     programs.nh = {
