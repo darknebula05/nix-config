@@ -14,7 +14,7 @@ with lib;
 
   config = mkIf cfg.enable {
     home.packages = with pkgs; [
-      # blender-hip
+      blender-hip
       bottles
       discord
       jellyfin-media-player

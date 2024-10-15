@@ -1,9 +1,7 @@
-{ inputs, pkgs, ... }:
+{ nixosConfigurations, writeText, ... }:
 let
   spec = {
-    agents = builtins.mapAttrs (
-      _: cfg: cfg.config.system.build.toplevel
-    ) inputs.self.nixosConfigurations;
+    agents = builtins.mapAttrs (_: cfg: cfg.config.system.build.toplevel) nixosConfigurations;
   };
 in
-(pkgs.writeText "deploy.json" (builtins.toJSON spec))
+(writeText "deploy.json" (builtins.toJSON spec))

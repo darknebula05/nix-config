@@ -20,7 +20,7 @@ with lib;
   };
 
   config = mkIf cfg.enable {
-    services.automatic-timezoned.enable = true;
+    # services.automatic-timezoned.enable = true;
 
     programs.fish.enable = true;
   };

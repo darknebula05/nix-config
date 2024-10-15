@@ -70,7 +70,12 @@
       ];
 
       perSystem =
-        { system, pkgs, ... }:
+        {
+          system,
+          pkgs,
+          self',
+          ...
+        }:
         {
           _module.args.pkgs = import inputs.nixpkgs {
             inherit system;
@@ -82,6 +87,8 @@
             riven = pkgs.callPackage ./packages/riven.nix { };
             riven-frontend = pkgs.callPackage ./packages/riven-frontend.nix { };
             zurg = pkgs.callPackage ./packages/zurg.nix { };
+            deploy = pkgs.callPackage ./packages/deploy.nix { inherit (inputs.self) nixosConfigurations; };
+            default = self'.packages.deploy;
           };
         };
     };
