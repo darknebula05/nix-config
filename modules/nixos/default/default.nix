@@ -19,7 +19,7 @@ with lib.${namespace};
   };
 
   config = mkIf cfg.enable {
-    services.automatic-timezoned = enabled;
+    # services.automatic-timezoned = enabled;
 
     programs.fish = enabled;
   };
