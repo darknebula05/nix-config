@@ -10,7 +10,10 @@ let
   user = "cameron";
 in
 {
-  imports = [ ./disko.nix ];
+  imports = [
+    ./disko.nix
+    inputs.self.nixosModules.default
+  ];
 
   facter.reportPath = ./facter.json;
 
@@ -20,6 +23,7 @@ in
       path = ./facter.json;
     };
     archetypes.workstation.enable = true;
+    home.path = ./home.nix;
     services.arrs.enable = true;
     user.extraGroups = [
       "networkmanager"

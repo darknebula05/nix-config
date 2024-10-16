@@ -3,11 +3,8 @@
 
   inputs = {
     nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
-    flake-parts.url = "github:hercules-ci/flake-parts";
-    flake-parts.inputs.nixpkgs-lib.follows = "nixpkgs";
-    ez-configs.url = "github:ehllie/ez-configs";
-    ez-configs.inputs.flake-parts.follows = "flake-parts";
-    ez-configs.inputs.nixpkgs.follows = "nixpkgs";
+    flakelight.url = "github:nix-community/flakelight";
+    flakelight.inputs.nixpkgs.follows = "nixpkgs";
 
     nixos-facter-modules.url = "github:numtide/nixos-facter-modules";
 
@@ -39,57 +36,15 @@
   };
 
   outputs =
-    inputs:
-    inputs.flake-parts.lib.mkFlake { inherit inputs; } {
-      imports = [ inputs.ez-configs.flakeModule ];
-
-      debug = true;
-      ezConfigs = {
-        root = ./.;
-        globalArgs = {
-          inherit inputs;
-        };
-        nixos = {
-          configurationsDirectory = ./configs/nixos;
-          modulesDirectory = ./modules/nixos;
-          hosts = {
-            cam-desktop.userHomeModules = [ "cameron" ];
-            cam-laptop.userHomeModules = [ "cameron" ];
-            nixos-wsl.userHomeModules = [ "cshearer" ];
-          };
-        };
-        home = {
-          configurationsDirectory = ./configs/home;
-          modulesDirectory = ./modules/home;
-        };
-      };
-
-      systems = [
-        "x86_64-linux"
-        "aarch64-linux"
-      ];
-
-      perSystem =
-        {
-          system,
-          pkgs,
-          self',
-          ...
-        }:
-        {
-          _module.args.pkgs = import inputs.nixpkgs {
-            inherit system;
-            overlays = [
-              inputs.poetry2nix.overlays.default
-            ];
-          };
-          packages = {
-            riven = pkgs.callPackage ./packages/riven.nix { };
-            riven-frontend = pkgs.callPackage ./packages/riven-frontend.nix { };
-            zurg = pkgs.callPackage ./packages/zurg.nix { };
-            deploy = pkgs.callPackage ./packages/deploy.nix { inherit (inputs.self) nixosConfigurations; };
-            default = self'.packages.deploy;
-          };
-        };
-    };
+    { flakelight, ... }@inputs:
+    flakelight ./. (
+      { outputs, ... }@flake:
+      {
+        inherit inputs;
+        withOverlays = [
+          inputs.poetry2nix.overlays.default
+          (_: _: { inherit (outputs) nixosConfigurations; })
+        ];
+      }
+    );
 }

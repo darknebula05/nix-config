@@ -1,0 +1,7 @@
+2024-10-16T15:52:40.352-0400	DEBUG	zurg	PID: 3819423
+2024-10-16T15:52:40.352-0400	INFO	zurg	Version: v0.9.3-final
+2024-10-16T15:52:40.352-0400	INFO	zurg	GitCommit: 4179c2745b4fb22fcb37f36de27b3daa39f114f0
+2024-10-16T15:52:40.352-0400	INFO	zurg	BuiltAt: 2024-07-14T09:48:30
+2024-10-16T15:52:40.352-0400	INFO	zurg	Debug logging is enabled; if you are not debugging please set LOG_LEVEL=info in your environment
+2024-10-16T15:52:40.352-0400	DEBUG	config	Loading config file ./config.yml
+2024-10-16T15:52:40.352-0400	ERROR	zurg	Config failed to load: open ./config.yml: no such file or directory

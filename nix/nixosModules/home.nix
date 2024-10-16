@@ -18,10 +18,19 @@ with lib;
       type = types.str;
       default = config.camms.variables.username;
     };
+    path = mkOption {
+      type = types.nullOr types.path;
+      default = null;
+    };
   };
 
   config.home-manager = mkIf cfg.enable {
     useUserPackages = true;
     useGlobalPkgs = true;
+    users.${cfg.name} = mkIf (cfg.path != null) cfg.path;
+    sharedModules = [ inputs.self.homeModules.default ];
+    extraSpecialArgs = {
+      inherit inputs;
+    };
   };
 }

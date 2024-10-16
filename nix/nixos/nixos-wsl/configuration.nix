@@ -7,12 +7,15 @@
 }:
 with lib;
 {
+  imports = [ inputs.self.nixosModules.default ];
+
   camms = {
     facter = {
       enable = true;
       path = ./facter.json;
     };
     home.enable = true;
+    home.path = ./home.nix;
     suites.common.enable = true;
     wsl.enable = true;
     stylix.enable = true;

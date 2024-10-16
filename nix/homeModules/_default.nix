@@ -1,5 +1,4 @@
 {
-  ezModules,
   lib,
   pkgs,
   inputs,
@@ -11,7 +10,7 @@ let
 in
 with lib;
 {
-  imports = builtins.attrValues (builtins.removeAttrs ezModules [ "default" ]);
+  imports = builtins.attrValues (builtins.removeAttrs inputs.self.homeModules [ "default" ]);
 
   options.camms.default.enable = mkOption {
     type = types.bool;

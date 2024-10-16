@@ -10,10 +10,14 @@ let
   user = "cameron";
 in
 {
-  imports = [ ./hardware-configuration.nix ];
+  imports = [
+    ./hardware-configuration.nix
+    inputs.self.nixosModules.default
+  ];
 
   camms = {
     archetypes.workstation.enable = true;
+    home.path = ./home.nix;
     user.extraGroups = [
       "networkmanager"
       "libvirtd"

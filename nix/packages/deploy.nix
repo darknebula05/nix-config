@@ -1,4 +1,4 @@
-{ nixosConfigurations, writeText, ... }:
+{ writeText, nixosConfigurations, ... }:
 let
   spec = {
     agents = builtins.mapAttrs (_: cfg: cfg.config.system.build.toplevel) nixosConfigurations;

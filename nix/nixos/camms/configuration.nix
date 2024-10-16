@@ -8,7 +8,10 @@
 }:
 with lib;
 {
-  imports = [ ./disko.nix ];
+  imports = [
+    ./disko.nix
+    inputs.self.nixosModules.default
+  ];
 
   facter.reportPath = ./facter.json;
   fileSystems."/nix/persist".neededForBoot = true;
