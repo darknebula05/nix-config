@@ -72,7 +72,7 @@ with lib;
             in
             {
               nixos.expr = ''(builtins.getFlake "${flake}").nixosConfigurations.cam-desktop.options'';
-              home-manager.expr = ''(builtins.getFlake "${flake}").homeConfigurations.cameron.options'';
+              home-manager.expr = ''(builtins.getFlake "${flake}").homeConfigurations.cameron@cam-desktop.options'';
               flake-parts.expr = ''(builtins.getFlake "${flake}").debug.options'';
               flake-parts2.expr = ''(builtins.getFlake "${flake}").currentSystem.options'';
             };

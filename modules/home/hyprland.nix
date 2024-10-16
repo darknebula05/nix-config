@@ -53,7 +53,7 @@ with lib;
         }
 
         animations {
-            true=true
+            enabled=true
             animation=windows,1,4,default,slide
             animation=border,1,10,default
             animation=fade,1,10,default
